@@ -1,17 +1,64 @@
 from pickle import dumps, load
 import pyfiglet
+import os
+import sys
+import platform
 
-# Clase Productos
-# Clase Clientes
-# Clase Pedidos
-# Gestor de Productos
-# Gestor de Clientes
-# Gestor de Pedidos
-# Menu Principal
+# Nos dira el directario donde se encuentra el modulo OS
+print(os.path)
+
+# Nos dira el sistema operativo donde estemos trabjando corta descripcion
+print(os.name)  # -> posix
+
+# platform nos dira especificamente con que SO estamos trabajando
+print(sys.platform)  # -> linux
+
+# directario donde estemos trabajando
+print(os.getcwd())  # -> path
+
+# Cambiar directario
+# os.chdir("..")  # change directory
+# print(os.getcwd())
+
+# Listar directorios
+print(os.listdir())
 
 
-# entidades
-# Product Class
+# Obtener version de Python
+print(sys.version)
+print(sys.version_info)  # mas extenso
+
+
+# sys module
+# Finalizar la ejecucion del programa o del programa
+# sys.exit()
+
+
+# Obtener version de Python
+print(sys.version)
+print(sys.version_info)  # mas extenso
+
+# platform
+
+# Arquitectura de nuestro systema
+print(platform.architecture())
+
+# Nos devuelve la arquitectura de nuestro procesador
+print(platform.machine())
+
+# Datos especificos de nuestro procesador
+print(platform.processor())  # -> x86_64
+
+# Informacion sobre la plataforma en donde estamos
+print(platform.platform())  # -> Linux 6.11-arch
+
+# Nombre del SO
+print(platform.system())  # -> Linux
+
+# Nos devuelve Informacion mas especifica de la plataforma
+print(platform.uname())
+
+
 class Producto:
     def __init__(self, cod, name, price):
         self.ean_code = int(cod)
@@ -75,16 +122,6 @@ class Order:
         return f"ID: {self.id_order} - Fecha: {self.order_date} - Lista: {self.list_orders}"
 
 
-# Pruebas de las entidades
-# Harina = Producto(2, "Harina", 2.3)
-# Roman = Cliente(3924590, "Roman Riquelme", "DD/MM/YYYY")
-# Orden1 = Pedido(123, ["zapallo", "zanahoria"], "13/11/2024", 50.5)
-
-# print(Harina)
-# print(Roman)
-# print(Orden1)
-
-
 # Subrrayado de texto
 def graphi(text):
     width = len(text)
@@ -137,20 +174,6 @@ class gestorProductos:
         return len(self.productos) + 1
 
 
-# Prueba de gestorProductos
-
-
-# new_product = Producto(23, "Harina", 23)
-# new_product2 = Producto(2, "Harina", 50.4)
-# gestor_de_productos.productos.append(new_product)
-# gestor_de_productos.productos.append(new_product2)
-#
-#
-# print(gestor_de_productos)
-# gestor_de_productos.mostrar_todos()
-# gestor_de_productos.mostrar_simplificado()
-
-
 class gestorClientes:
     def __init__(self) -> None:
         self.clientes: list[Cliente] = []
@@ -192,17 +215,6 @@ class gestorClientes:
         return None
 
 
-# Prueba de gestorClientes -------------------------------
-
-# new_client = Cliente(39234123, "Hugo", "20/03/2007")
-# new_client2 = Cliente(90245213, "Stevven", "12/12/2000")
-# gestor_de_clientes.clientes.append(new_client)
-# gestor_de_clientes.clientes.append(new_client2)
-# print(gestor_de_clientes)
-# gestor_de_clientes.mostrar_todos()
-# gestor_de_clientes.mostrar_simplificado()
-
-
 class orderGestor:
     def __init__(self) -> None:
         self.pedidos: list[Order] = []
@@ -242,15 +254,6 @@ class orderGestor:
 gestor_de_productos = gestorProductos()
 gestor_de_clientes = gestorClientes()
 gestor_de_pedidos = orderGestor()
-
-# Pruebas de gestor de pedidos
-# orden = Order(23, ["zanahoria", "zapallo"], "20/03/2007", 4.4)
-# orden2 = Order(3, ["zapatos", "zapatillas"], "10/06/2017", 90.3)
-# gestor_de_pedidos.pedidos.append(orden)
-# gestor_de_pedidos.pedidos.append(orden2)
-# print(gestor_de_pedidos)
-# gestor_de_pedidos.mostrar_todos()
-# gestor_de_pedidos.mostrar_simplificado()
 
 
 # Escribir en binario
@@ -645,8 +648,3 @@ def mainMenu():
                 text="Gracias !!! \nVuelva Pronto", font="slant", colors="BLUE"
             )
             break
-
-
-cargar_desde_binario_productos()
-cargar_desde_binario_clientes()
-mainMenu()
