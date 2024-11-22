@@ -1,6 +1,8 @@
 from pickle import dumps, load
 import pyfiglet
 import os
+import re
+from datetime import datetime
 
 
 class Producto:
@@ -48,7 +50,7 @@ class Order:
     def __init__(self, cod: int, product_orders: list, date: str, charge: float):
         self.id_order = int(cod)
         self.list_orders = product_orders
-        self.order_date = date
+        self.order_date = Fecha()
         self.extra_charge = float(charge)
 
     def __repr__(self) -> str:
@@ -137,6 +139,23 @@ class gestorClientes:
     def eliminar_cliente(self, cliente_a_eliminar: Cliente):
         self.clientes.remove(cliente_a_eliminar)
 
+    def _es_fecha_nacimiento_valida(self, fecha_str: str) -> bool:
+        try:
+            Fecha(fecha_str)
+            return True
+        except ValueError:
+            return False
+
+    def _pedir_fecha_nacimiento_valida(self):
+        fecha_nacimiento = "NO_VALIDA"
+        while not self._es_fecha_nacimiento_valida(fecha_nacimiento):
+            fecha_nacimiento = input(
+                "Ingrese la fecha de nacimiento del Cliente (dd/mm/aaaa): "
+            )
+            if not self._es_fecha_nacimiento_valida(fecha_nacimiento):
+                print("Formato de fecha no válido. Debe ser dd/mm/aaaa")
+        return Fecha(fecha_nacimiento)
+
     def mostrar_todos(self):
         if self.clientes:
             print("Listando los Clientes disponibles")
@@ -192,6 +211,30 @@ class orderGestor:
             if pedido.id_order == codigo_a_buscar:
                 return pedido
         return None
+
+
+class Fecha:
+    def __init__(self, fecha_str: str = None):
+        if not fecha_str:
+            hoy = datetime.now()
+            self.dia = hoy.day
+            self.mes = hoy.month
+            self.anio = hoy.year
+        else:
+            # validar formato de fecha dd/mm/aaaa con expresiones regulres
+            if not self.es_fecha_valida(fecha_str):
+                raise ValueError("Formato de fecha no válido. Debe ser dd/mm/aaaa")
+            partes = str(fecha_str).split("/")
+            self.dia = int(partes[0])
+            self.mes = int(partes[1])
+            self.anio = int(partes[2])
+
+    def es_fecha_valida(self, fecha: str):
+        patron = r"^(0[1-9]|[12][0-9]|3[01])/(0[1-9]|1[0-2])/\d{4}$"
+        return re.match(patron, fecha)
+
+    def __str__(self):
+        return f"{self.dia}/{self.mes}/{self.anio}"
 
 
 # Creacion de los objetos "Gestores de Entidades" -----------------------------
@@ -417,7 +460,7 @@ def createClient():
         cod = DNIValidate()
         name = input("Ingrese el nombre del Cliente: ")
         print("Ingrese la fecha de Nacimiento en este formato DD/MM/AAAA")
-        date = input("DIA/MES/ANIO: ")
+        date = gestor_de_clientes._pedir_fecha_nacimiento_valida()
         new_client = Cliente(cod, name, date)
         gestor_de_clientes.clientes.append(new_client)
         escribir_en_binario_clientes()
@@ -437,14 +480,14 @@ def updateClient():
     client_encontrado = gestor_de_clientes.buscar_por_codigo(client_code)
     if client_encontrado:
         nuevo_nombre = input("Ingrese el nuevo nombre - (Enter para dejar el actual): ")
-        dni_confirm = input("Desea cambiar el DNI del Cliente ? S/n ")
+        dni_confirm = input(
+            "Desea cambiar el DNI y Fecha de Nacimiento del Cliente ? S/n "
+        )
         if dni_confirm.lower() in ("no", "n"):
             nuevo_id = ""
         else:
-            nuevo_id = intValidate("Ingrese el nuevo DNI: ")
-        nuevo_fecha = input(
-            "Ingrese la Fecha de Nacimiento DD/MM/AAAA - (Enter para dejar actual): "
-        )
+            nuevo_id = DNIValidate()
+        nuevo_fecha = gestor_de_clientes._pedir_fecha_nacimiento_valida()
 
         # cambios anteriores
         nombre_sin_cambio = client_encontrado.surname_name
