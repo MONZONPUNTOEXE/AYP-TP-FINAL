@@ -294,6 +294,41 @@ def cargar_desde_binario_pedidos():
         gestor_de_pedidos.pedidos = load(bin_file)
 
 
+def permanenciaDeArchivos():
+    dirs = os.listdir()
+    for directory in dirs:
+        if directory == "bin":
+            print("La carpeta bin existe")
+            print("Cargando la carpeta 'bin'...")
+            break
+    else:
+        print("La Carpeta 'bin' no existe")
+        print("Creando la Carpeta 'bin'...")
+        os.mkdir("bin")
+        print("La Carpeta 'bin' ha sido creada")
+    os.chdir("./bin")
+    files = os.listdir()
+    for bin in files:
+        print(bin)
+        print("Cargando los binarios...")
+        if bin == "productos.bin":
+            print("Cargando 'productos.bin'...")
+            cargar_desde_binario_productos()
+            print("'productos.bin' Se ha cargado exitosamente.")
+        elif bin == "clientes.bin":
+            print("Cargando 'clientes.bin'...")
+            cargar_desde_binario_clientes()
+            print("'clientes.bin' Se ha cargado exitosamente.")
+        elif bin == "pedidos.bin":
+            print("Cargando 'pedidos.bin'...")
+            cargar_desde_binario_pedidos()
+            print("'pedidos.bin' Se ha cargado exitosamente.")
+    os.chdir("..")
+
+
+permanenciaDeArchivos()
+
+
 # --------------------- Validaciones -------------------------------------
 def intValidate(msg="Ingrese un numero positivo: "):
     entero = ""
@@ -364,12 +399,10 @@ def createProduct():
 def modificarProducto():
     global gestor_de_productos
     gestor_de_productos.mostrar_simplificado()
-    product_code = intValidate(
-        "Ingrese el codigo del Producto que desea modificar: ")
+    product_code = intValidate("Ingrese el codigo del Producto que desea modificar: ")
     producto_encontrado = gestor_de_productos.buscar_por_codigo(product_code)
     if producto_encontrado:
-        nuevo_nombre = input(
-            "Ingrese el nuevo nombre - (Enter para dejar el actual): ")
+        nuevo_nombre = input("Ingrese el nuevo nombre - (Enter para dejar el actual): ")
         precio_confirm = input("Desea cambiar el Precio del Producto ? S/n ")
         if precio_confirm.lower() in ("no", "n"):
             nuevo_precio = ""
@@ -450,12 +483,10 @@ def createClient():
 def updateClient():
     global gestor_de_clientes
     gestor_de_clientes.mostrar_simplificado()
-    client_code = intValidate(
-        "Ingrese el DNI del Cliente que desea modificar: ")
+    client_code = intValidate("Ingrese el DNI del Cliente que desea modificar: ")
     client_encontrado = gestor_de_clientes.buscar_por_codigo(client_code)
     if client_encontrado:
-        nuevo_nombre = input(
-            "Ingrese el nuevo nombre - (Enter para dejar el actual): ")
+        nuevo_nombre = input("Ingrese el nuevo nombre - (Enter para dejar el actual): ")
         dni_confirm = input("Desea cambiar el DNI del Cliente ? S/n ")
         if dni_confirm.lower() in ("no", "n"):
             nuevo_id = ""
@@ -630,8 +661,7 @@ def mainMenu():
 
     while True:
         # grafico ASCII
-        pyfiglet.print_figlet(
-            text="La Despensita\nby Franco Monzon", colors="RED")
+        pyfiglet.print_figlet(text="La Despensita\nby Franco Monzon", colors="RED")
         # Imprimir Menu
         print(menu)
         opcion = intValidate(
