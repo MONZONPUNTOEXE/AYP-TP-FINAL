@@ -203,19 +203,19 @@ gestor_de_pedidos = orderGestor()
 # Escribir en binario
 def escribir_en_binario_productos():
     global gestor_de_productos
-    with open("productos.bin", "wb") as bin_file:
+    with open("./bin/productos.bin", "wb") as bin_file:
         bin_file.write(dumps(gestor_de_productos.productos))
 
 
 def escribir_en_binario_clientes():
     global gestor_de_clientes
-    with open("clientes.bin", "wb") as bin_file:
+    with open("./bin/clientes.bin", "wb") as bin_file:
         bin_file.write(dumps(gestor_de_clientes.clientes))
 
 
 def escribir_en_binario_pedidos():
     global gestor_de_pedidos
-    with open("pedidos.bin", "wb") as bin_file:
+    with open("./bin/pedidos.bin", "wb") as bin_file:
         bin_file.write(dumps(gestor_de_pedidos.pedidos))
 
 
@@ -311,10 +311,19 @@ def validateName():
             print("El nombre debe tener menos de 60 caracteres")
 
 
+def DNIValidate() -> int:
+    dni = intValidate("Ingrese su DNI, sin coma ni puntos: ")
+    while len(str(dni)) != 8:
+        print("El DNI ingresado no es valido, Intentelo nuevamente!")
+        dni = intValidate("Ingrese su DNI, sin coma ni puntos: ")
+    print(f"Su DNI ({dni}) se guardo satisfactoriamente!")
+    return int(dni)
+
+
 # preba de validacion
 # opcion = floatValidate("Ingrese su peso: ")
 # print(opcion)
-
+# DNIValidate()
 # funciones de Producto --------------
 
 
@@ -405,7 +414,7 @@ def removeProduct():
 def createClient():
     global gestor_de_clientes
     while True:
-        cod = intValidate("Ingrese el DNI del Cliente: ")
+        cod = DNIValidate()
         name = input("Ingrese el nombre del Cliente: ")
         print("Ingrese la fecha de Nacimiento en este formato DD/MM/AAAA")
         date = input("DIA/MES/ANIO: ")
