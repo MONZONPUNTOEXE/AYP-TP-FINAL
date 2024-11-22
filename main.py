@@ -1,62 +1,6 @@
 from pickle import dumps, load
 import pyfiglet
 import os
-import sys
-import platform
-
-# Nos dira el directario donde se encuentra el modulo OS
-print(os.path)
-
-# Nos dira el sistema operativo donde estemos trabjando corta descripcion
-print(os.name)  # -> posix
-
-# platform nos dira especificamente con que SO estamos trabajando
-print(sys.platform)  # -> linux
-
-# directario donde estemos trabajando
-print(os.getcwd())  # -> path
-
-# Cambiar directario
-# os.chdir("..")  # change directory
-# print(os.getcwd())
-
-# Listar directorios
-print(os.listdir())
-
-
-# Obtener version de Python
-print(sys.version)
-print(sys.version_info)  # mas extenso
-
-
-# sys module
-# Finalizar la ejecucion del programa o del programa
-# sys.exit()
-
-
-# Obtener version de Python
-print(sys.version)
-print(sys.version_info)  # mas extenso
-
-# platform
-
-# Arquitectura de nuestro systema
-print(platform.architecture())
-
-# Nos devuelve la arquitectura de nuestro procesador
-print(platform.machine())
-
-# Datos especificos de nuestro procesador
-print(platform.processor())  # -> x86_64
-
-# Informacion sobre la plataforma en donde estamos
-print(platform.platform())  # -> Linux 6.11-arch
-
-# Nombre del SO
-print(platform.system())  # -> Linux
-
-# Nos devuelve Informacion mas especifica de la plataforma
-print(platform.uname())
 
 
 class Producto:
@@ -324,9 +268,6 @@ def permanenciaDeArchivos():
             cargar_desde_binario_pedidos()
             print("'pedidos.bin' Se ha cargado exitosamente.")
     os.chdir("..")
-
-
-permanenciaDeArchivos()
 
 
 # --------------------- Validaciones -------------------------------------
@@ -678,3 +619,7 @@ def mainMenu():
                 text="Gracias !!! \nVuelva Pronto", font="slant", colors="BLUE"
             )
             break
+
+
+permanenciaDeArchivos()
+mainMenu()
