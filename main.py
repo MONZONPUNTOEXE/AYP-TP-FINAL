@@ -47,9 +47,12 @@ class Cliente:
 
 
 class Order:
-    def __init__(self, cod: int, product_orders: list, date: str, charge: float):
+    def __init__(
+        self, cod: int, customer: str, product_list: list, date: str, charge: float
+    ):
         self.id_order = int(cod)
-        self.list_orders = product_orders
+        self.customer = customer
+        self.product_list = [Producto]
         self.order_date = Fecha()
         self.extra_charge = float(charge)
 
@@ -59,8 +62,9 @@ class Order:
             f"          ID de la Orden: {self.id_order}\n"
             f"══════════════════════════════════════════\n"
             f" Fecha de Orden:  {self.order_date}\n"
+            f" Cliente:          {self.customer}\n"
             f" Cargos:          {self.extra_charge}%\n"
-            f" Lista de Orden:  {self.list_orders}\n"
+            f" Lista de Productos: {self.product_list}\n"
             f"══════════════════════════════════════════\n"
         )
 
@@ -211,6 +215,9 @@ class orderGestor:
             if pedido.id_order == codigo_a_buscar:
                 return pedido
         return None
+
+    def create_order_cod(self):
+        return len(self.pedidos) + 1
 
 
 class Fecha:
@@ -528,7 +535,7 @@ def updateClient():
 def deleteClient():
     global gestor_de_clientes
     gestor_de_clientes.mostrar_simplificado()
-    code = intValidate("Ingrese el codigo del Cliente que desea Eliminar: ")
+    code = intValidate("Ingrese el DNI del Cliente que desea Eliminar: ")
     client_encontrado = gestor_de_clientes.buscar_por_codigo(code)
     if client_encontrado:
         opcion = input(f"\n\tDesea eliminar ?\n\n{client_encontrado}\nS/n: ")
@@ -543,6 +550,37 @@ def deleteClient():
 
 
 # funciones de Orden -----------------
+def createOrder():
+    global gestor_de_pedidos
+    global gestor_de_clientes
+    global gestor_de_productos
+    _CARRITO_DE_PRODUCTOS = [Producto]
+
+    while True:
+        pyfiglet.print_figlet(text="Crear Pedidos", colors="BLUE")
+        if gestor_de_clientes.validarListaVacia():
+            gestor_de_clientes.mostrar_simplificado()
+            dni_code = intValidate(
+                "Ingrese el DNI del Cliente para realizar el Pedido: "
+            )
+            client_encontrado = gestor_de_clientes.buscar_por_codigo(dni_code)
+            if client_encontrado:
+                print(f"\n\tSu Cliente es:\n\n{client_encontrado}\n")
+                gestor_de_productos.mostrar_simplificado()
+                prod_code = intValidate(
+                    "Ingrese el Codigo del Producto que desee agregar: "
+                )
+                producto_encontrado = gestor_de_productos.buscar_por_codigo(prod_code)
+                if producto_encontrado:
+                    print(producto_encontrado)
+                else:
+                    print("El codigo del Producto no fue encontrado")
+            else:
+                print("El DNI no fue encontrado!")
+
+        else:
+            print("Aca no hay ni merga")
+            break
 
 
 # menu de Producto
@@ -648,7 +686,7 @@ def mainMenu():
     menu = """
     1 - Gestión de Productos
     2 - Gestión de Clientes
-    3 - Gestión de Pedidos (sin realizar)
+    3 - Gestión de Pedidos
     4 - Salir
     """
 
@@ -665,7 +703,7 @@ def mainMenu():
         if opcion == 2:
             menuCliente()
         if opcion == 3:
-            pass
+            createOrder()
         if opcion == 4:
             pyfiglet.print_figlet(
                 text="Gracias !!! \nVuelva Pronto", font="slant", colors="BLUE"
@@ -674,4 +712,5 @@ def mainMenu():
 
 
 permanenciaDeArchivos()
+createOrder()
 mainMenu()
