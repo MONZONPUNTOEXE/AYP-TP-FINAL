@@ -5,6 +5,13 @@ import re
 from datetime import datetime
 
 
+class colors:
+    OK = "\033[92m"  # GREEN
+    WARNING = "\033[93m"  # YELLOW
+    FAIL = "\033[91m"  # RED
+    RESET = "\033[0m"  # RESET COLOR
+
+
 class Producto:
     def __init__(self, cod, name, price):
         self.ean_code = int(cod)
@@ -22,7 +29,7 @@ class Producto:
         )
 
     def resumenProducto(self):
-        return f"Codigo Ean: {self.ean_code} - Nombre del Producto: {self.product_name}"
+        return f"{self.ean_code} - {self.product_name} - ${self.product_price}"
 
 
 # Clients Class
@@ -48,13 +55,21 @@ class Cliente:
 
 class Order:
     def __init__(
-        self, cod: int, customer: str, product_list: list, date: str, charge: float
+        self,
+        cod: int,
+        customer: str,
+        product_list: list,
+        charge: float,
+        subtotal: float,
+        total: float,
     ):
         self.id_order = int(cod)
         self.customer = customer
-        self.product_list = [Producto]
+        self.product_list = product_list
         self.order_date = Fecha()
         self.extra_charge = float(charge)
+        self.subtotal = float(subtotal)
+        self.total = float(total)
 
     def __repr__(self) -> str:
         return (
@@ -65,11 +80,16 @@ class Order:
             f" Cliente:          {self.customer}\n"
             f" Cargos:          {self.extra_charge}%\n"
             f" Lista de Productos: {self.product_list}\n"
+            f" Subtotal: {self.subtotal}\n"
+            f" Total: {self.total}\n"
+            f" Lista de Productos: \n{self.product_list}\n"
             f"══════════════════════════════════════════\n"
         )
 
     def resumenOrden(self):
-        return f"ID: {self.id_order} - Fecha: {self.order_date} - Lista: {self.list_orders}"
+        return (
+            f"ID: {self.id_order} - Fecha: {self.order_date} - Cliente: {self.customer}"
+        )
 
 
 # Subrrayado de texto
@@ -88,7 +108,9 @@ class gestorProductos:
         if len(self.productos) > 0:
             return str(self.productos)
         else:
-            return "No hay productos Cargados actualmente"
+            return (
+                colors.WARNING + "No hay productos Cargados actualmente" + colors.RESET
+            )
 
     def validarListaVacia(self):
         if len(self.productos) > 0:
@@ -103,9 +125,11 @@ class gestorProductos:
         if self.productos:
             print("Listando los Productos disponibles")
             for producto in self.productos:
-                print(producto)
+                print(colors.OK, producto, colors.RESET)
         else:
-            print("No hay productos cargados hasta el momento")
+            print(
+                colors.FAIL, "No hay productos cargados hasta el momento", colors.RESET
+            )
 
     def mostrar_simplificado(self):
         if self.productos:
@@ -132,7 +156,9 @@ class gestorClientes:
         if len(self.clientes) > 0:
             return str(self.clientes)
         else:
-            return "No hay clientes cargados actualmente"
+            return (
+                colors.WARNING + "No hay clientes cargados actualmente" + colors.RESET
+            )
 
     def validarListaVacia(self):
         if len(self.clientes) > 0:
@@ -157,16 +183,20 @@ class gestorClientes:
                 "Ingrese la fecha de nacimiento del Cliente (dd/mm/aaaa): "
             )
             if not self._es_fecha_nacimiento_valida(fecha_nacimiento):
-                print("Formato de fecha no válido. Debe ser dd/mm/aaaa")
+                print("Formato de fecha no válido. Debe ser DIA/MES/ANIO (dd/mm/aaaa)")
         return Fecha(fecha_nacimiento)
 
     def mostrar_todos(self):
         if self.clientes:
             print("Listando los Clientes disponibles")
             for cliente in self.clientes:
-                print(cliente)
+                print(colors.OK, cliente, colors.RESET)
         else:
-            print("No hay Clientes cargados hasta el momento")
+            print(
+                colors.WARNING
+                + "No hay Clientes cargados hasta el momento"
+                + colors.RESET
+            )
 
     def mostrar_simplificado(self):
         if self.clientes:
@@ -190,7 +220,13 @@ class orderGestor:
         if len(self.pedidos) > 0:
             return str(self.pedidos)
         else:
-            return "No hay pedidos cargados actualmente"
+            return colors.WARNING + "No hay pedidos cargados actualmente" + colors.RESET
+
+    def validarListaVacia(self):
+        if len(self.pedidos) > 0:
+            return True
+        else:
+            return None
 
     def eliminar_pedido(self, pedido_a_eliminar: Order):
         self.pedidos.remove(pedido_a_eliminar)
@@ -201,14 +237,18 @@ class orderGestor:
             for pedido in self.pedidos:
                 print(pedido)
         else:
-            print("No hay pedidos cargados hasta el momento")
+            print(
+                colors.WARNING
+                + "No hay pedidos cargados hasta el momento"
+                + colors.RESET
+            )
 
     def mostrar_simplificado(self):
         if self.pedidos:
             for pedido in self.pedidos:
                 print(pedido.resumenOrden())
         else:
-            print("La lista esta Vacia")
+            print(colors.WARNING + "La lista esta Vacia" + colors.RESET)
 
     def buscar_por_codigo(self, codigo_a_buscar: int):
         for pedido in self.pedidos:
@@ -230,7 +270,11 @@ class Fecha:
         else:
             # validar formato de fecha dd/mm/aaaa con expresiones regulres
             if not self.es_fecha_valida(fecha_str):
-                raise ValueError("Formato de fecha no válido. Debe ser dd/mm/aaaa")
+                raise ValueError(
+                    colors.FAIL
+                    + "Formato de fecha no válido. Debe ser dd/mm/aaaa"
+                    + colors.RESET
+                )
             partes = str(fecha_str).split("/")
             self.dia = int(partes[0])
             self.mes = int(partes[1])
@@ -326,7 +370,7 @@ def intValidate(msg="Ingrese un numero positivo: "):
     while not entero.isdecimal():
         entero = input(msg)
         if not entero.isdecimal():
-            print("Debe ingresar un numero entero! ")
+            print(colors.WARNING, "Debe ingresar un numero entero!", colors.RESET)
     return int(entero)
 
 
@@ -344,6 +388,15 @@ def floatValidate(msg="Ingrese un numero decimal: "):
     return float(float_num)
 
 
+def floatValidate_neg(msg="Ingrese un numero decimal: "):
+    float_num = ""
+    while not is_float(float_num):
+        float_num = input(msg)
+        if not is_float(float_num):
+            print("Ingrese un numero decimal: ")
+    return float(float_num)
+
+
 def is_float(num):
     try:
         float(num)
@@ -352,28 +405,53 @@ def is_float(num):
         return False
 
 
-def validateName():
+def validateClientName():
     while True:
-        name = input("Ingrese el nombre del producto :")
+        name = input("Ingrese el nombre el Nombre y Apellido: ")
         if len(name) < 61:
             return name
         else:
-            print("El nombre debe tener menos de 60 caracteres")
+            print(
+                colors.FAIL
+                + "El nombre debe tener menos de 60 caracteres"
+                + colors.RESET
+            )
 
 
-def DNIValidate() -> int:
-    dni = intValidate("Ingrese su DNI, sin coma ni puntos: ")
+def validateProductName() -> str:
+    while True:
+        name = input("Ingrese el nombre del Producto : ")
+        if len(name) < 51:
+            return name
+        else:
+            print(
+                colors.FAIL
+                + "El nombre debe tener menos de 50 caracteres"
+                + colors.RESET
+            )
+
+
+def dniValidate() -> int:
+    dni = intValidate(
+        colors.WARNING + "Ingrese su DNI, sin coma ni puntos: " + colors.RESET
+    )
     while len(str(dni)) != 8:
-        print("El DNI ingresado no es valido, Intentelo nuevamente!")
-        dni = intValidate("Ingrese su DNI, sin coma ni puntos: ")
-    print(f"Su DNI ({dni}) se guardo satisfactoriamente!")
+        print(
+            colors.FAIL
+            + "El DNI ingresado no es valido, Intentelo nuevamente!"
+            + colors.RESET
+        )
+        dni = intValidate(
+            colors.WARNING + "Ingrese su DNI, sin coma ni puntos: " + colors.RESET
+        )
+    print(f"{colors.OK}Su DNI ({dni}) se guardo satisfactoriamente! {colors.RESET}")
     return int(dni)
 
 
 # preba de validacion
 # opcion = floatValidate("Ingrese su peso: ")
 # print(opcion)
-# DNIValidate()
+# dniValidate()
 # funciones de Producto --------------
 
 
@@ -382,15 +460,15 @@ def createProduct():
     global gestor_de_productos
     while True:
         cod = gestor_de_productos.obtener_nuevo_codigo()
-        name = validateName()
+        name = validateProductName()
         price = floatValidate("Ingrese el precio del Producto : ")
         new_product = Producto(cod, name, price)
         gestor_de_productos.productos.append(new_product)
         escribir_en_binario_productos()
-        print("Se ha creado un nuevo Producto")
+        print(colors.OK, "Se ha creado un nuevo Producto", colors.RESET)
         print(new_product)
-        user = input(f"hay un total de ({
-                     len(gestor_de_productos.productos)}) Productos desea ingresar mas ?: s/n ")
+        user = input(f"{colors.WARNING}hay un total de ({
+                     len(gestor_de_productos.productos)}) Productos desea ingresar mas ?: s/n {colors.RESET}")
         if user.lower() == "n":
             break
 
@@ -399,10 +477,12 @@ def createProduct():
 def modificarProducto():
     global gestor_de_productos
     gestor_de_productos.mostrar_simplificado()
-    product_code = intValidate("Ingrese el codigo del Producto que desea modificar: ")
+    product_code = intValidate(
+        "Ingrese el codigo del Producto que desea modificar: ")
     producto_encontrado = gestor_de_productos.buscar_por_codigo(product_code)
     if producto_encontrado:
-        nuevo_nombre = input("Ingrese el nuevo nombre - (Enter para dejar el actual): ")
+        nuevo_nombre = input(
+            "Ingrese el nuevo nombre - (Enter para dejar el actual): ")
         precio_confirm = input("Desea cambiar el Precio del Producto ? S/n ")
         if precio_confirm.lower() in ("no", "n"):
             nuevo_precio = ""
@@ -464,8 +544,8 @@ def removeProduct():
 def createClient():
     global gestor_de_clientes
     while True:
-        cod = DNIValidate()
-        name = input("Ingrese el nombre del Cliente: ")
+        cod = dniValidate()
+        name = validateClientName()
         print("Ingrese la fecha de Nacimiento en este formato DD/MM/AAAA")
         date = gestor_de_clientes._pedir_fecha_nacimiento_valida()
         new_client = Cliente(cod, name, date)
@@ -483,17 +563,19 @@ def createClient():
 def updateClient():
     global gestor_de_clientes
     gestor_de_clientes.mostrar_simplificado()
-    client_code = intValidate("Ingrese el DNI del Cliente que desea modificar: ")
+    client_code = intValidate(
+        "Ingrese el DNI del Cliente que desea modificar: ")
     client_encontrado = gestor_de_clientes.buscar_por_codigo(client_code)
     if client_encontrado:
-        nuevo_nombre = input("Ingrese el nuevo nombre - (Enter para dejar el actual): ")
+        nuevo_nombre = input(
+            "Ingrese el nuevo nombre - (Enter para dejar el actual): ")
         dni_confirm = input(
             "Desea cambiar el DNI y Fecha de Nacimiento del Cliente ? S/n "
         )
         if dni_confirm.lower() in ("no", "n"):
             nuevo_id = ""
         else:
-            nuevo_id = DNIValidate()
+            nuevo_id = dniValidate()
         nuevo_fecha = gestor_de_clientes._pedir_fecha_nacimiento_valida()
 
         # cambios anteriores
@@ -550,36 +632,159 @@ def deleteClient():
 
 
 # funciones de Orden -----------------
+def subtotalCarrito(carrito) -> float:
+    suma = 0
+    for producto in carrito:
+        suma += producto.product_price
+    return float(suma)
+
+
+def mostrarCarrito(carrito: list):
+    for producto in carrito:
+        print(f"{producto.product_name} ${producto.product_price}")
+
+
 def createOrder():
     global gestor_de_pedidos
     global gestor_de_clientes
     global gestor_de_productos
-    _CARRITO_DE_PRODUCTOS = [Producto]
+    CARRITO_DE_PRODUCTOS = []
 
+    pyfiglet.print_figlet(text="Crear Pedidos", colors="BLUE")
     while True:
-        pyfiglet.print_figlet(text="Crear Pedidos", colors="BLUE")
-        if gestor_de_clientes.validarListaVacia():
+        if (
+            gestor_de_clientes.validarListaVacia()
+            and gestor_de_productos.validarListaVacia()
+        ):
+            cod = gestor_de_pedidos.create_order_cod()
+            print("\t ------------ Lista de Clientes -----------------")
             gestor_de_clientes.mostrar_simplificado()
             dni_code = intValidate(
-                "Ingrese el DNI del Cliente para realizar el Pedido: "
+                "\nDNI - Del Cliente Para realizar el Pedido \n4 - Para Ir al Menu Principal\n\nIngrese: "
             )
             client_encontrado = gestor_de_clientes.buscar_por_codigo(dni_code)
             if client_encontrado:
-                print(f"\n\tSu Cliente es:\n\n{client_encontrado}\n")
-                gestor_de_productos.mostrar_simplificado()
-                prod_code = intValidate(
-                    "Ingrese el Codigo del Producto que desee agregar: "
-                )
-                producto_encontrado = gestor_de_productos.buscar_por_codigo(prod_code)
-                if producto_encontrado:
-                    print(producto_encontrado)
-                else:
-                    print("El codigo del Producto no fue encontrado")
+                print(f"\n\tSu Cliente es: {
+                      client_encontrado.surname_name}\n")
+                iniciar_while_productos = True
+                while iniciar_while_productos:
+                    if len(CARRITO_DE_PRODUCTOS) > 1:
+                        print(
+                            "\n\n\t----------------------------------------------------------"
+                        )
+                        print(
+                            f"\tHay ({len(CARRITO_DE_PRODUCTOS)}) Productos en el Carrito para {
+                                client_encontrado.surname_name}\n\tEl Subtotal sin Cargos es de ${subtotalCarrito(CARRITO_DE_PRODUCTOS)}"
+                        )
+                        print(
+                            "\t----------------------------------------------------------"
+                        )
+                    print("\n\t--------- Productos Disponibles -------------")
+                    gestor_de_productos.mostrar_simplificado()
+                    prod_code = intValidate(
+                        "Ingrese el Codigo del Producto que desee agregar: "
+                    )
+                    producto_encontrado = gestor_de_productos.buscar_por_codigo(
+                        prod_code
+                    )
+                    if producto_encontrado:
+                        CARRITO_DE_PRODUCTOS.append(producto_encontrado)
+                        if len(CARRITO_DE_PRODUCTOS) > 1:
+                            print(
+                                f"{colors.WARNING} Carrito Actual para {
+                                    client_encontrado.surname_name}{colors.RESET}: "
+                            )
+                            mostrarCarrito(CARRITO_DE_PRODUCTOS)
+                        subtotal = subtotalCarrito(CARRITO_DE_PRODUCTOS)
+                        user = input(
+                            f"Desea ingresar mas Productos al Carrito para {
+                                client_encontrado.surname_name} ?: s/n "
+                        )
+                        if user.lower() in ("n", "no"):
+                            print(
+                                f"\n\t --- El Subtotal del Carrito es de ${
+                                    subtotal} --- "
+                            )
+                            print(
+                                "- Si desea hacer un Descuento Ingrese el porcentaje con numero negativo"
+                            )
+                            print("(Ejemplo: -5, -15, -20)")
+                            print(
+                                "- Si desea un cargo extra Ingrese el porcentaje con numero positivo"
+                            )
+                            print(
+                                "- Si no desea agregar Descuento ni Cargos Extras ingrese '0 (cero)'"
+                            )
+                            while True:
+                                opcion = floatValidate_neg()
+                                if opcion >= 1000 or opcion <= -100:
+                                    print(
+                                        "No puede haber un descuento mayor al 100%, tampoco un recargo mayor 1000%"
+                                    )
+                                elif opcion == 0:
+                                    cargo = 0
+                                    total = cargo + subtotal
+                                    print(
+                                        f"\n\t- El Subtotal es de {subtotal}")
+                                    print(f"\t- El Cargo es de {opcion}%")
+                                    print(f"\t- El Total es de: ${total}")
+                                    new_pedido = Order(
+                                        cod,
+                                        client_encontrado.surname_name,
+                                        CARRITO_DE_PRODUCTOS,
+                                        opcion,
+                                        subtotal,
+                                        total,
+                                    )
+                                    gestor_de_pedidos.pedidos.append(
+                                        new_pedido)
+                                    escribir_en_binario_pedidos()
+                                    CARRITO_DE_PRODUCTOS = []
+                                    iniciar_while_productos = False
+                                    break
+                                else:
+                                    cargo = subtotal * opcion / 100
+                                    total = cargo + subtotal
+                                    print(f"- El Subtotal es de {subtotal}")
+                                    print(f"- El Cargo es de {opcion}%")
+                                    print(f"- El Total es de: ${total}")
+                                    new_pedido = Order(
+                                        cod,
+                                        client_encontrado.surname_name,
+                                        CARRITO_DE_PRODUCTOS,
+                                        float(opcion),
+                                        float(subtotal),
+                                        float(total),
+                                    )
+                                    print(new_pedido)
+                                    gestor_de_pedidos.pedidos.append(
+                                        new_pedido)
+                                    escribir_en_binario_pedidos()
+                                    CARRITO_DE_PRODUCTOS = []
+                                    iniciar_while_productos = False
+                                    break
+                    else:
+                        print(
+                            colors.WARNING
+                            + "El Codigo del Producto no fue encontrado"
+                            + colors.RESET
+                        )
+            elif dni_code == 4:
+                break
             else:
-                print("El DNI no fue encontrado!")
+                print(
+                    colors.WARNING
+                    + "El DNI no fue encontrado!, Intentelo nuevamente"
+                    + colors.RESET
+                )
 
         else:
-            print("Aca no hay ni merga")
+            if len(gestor_de_productos.productos) == 0:
+                text = "No hay productos para seleccionar, debe cargar los Productos e intentelo nuevamente"
+                graphi(text)
+            if len(gestor_de_clientes.clientes) == 0:
+                text = "No hay Clientes para seleccionar, debe cargar los Clientes e intentelo nuevamente"
+                graphi(text)
             break
 
 
@@ -589,9 +794,8 @@ product_menu_text = """
 
 crear producto - Para crear un producto nuevo
 modificar producto - Para modificar un producto
-mostrar todo - Para listar todos los productos cargados en memoria
+mostrar todo - Para listar todos los productos
 eliminar producto - Para eliminar un producto por codigo
-mostrar binario - Para mostrar desde archivo binario
 
 salir - Para Salir del programa
 """
@@ -602,9 +806,20 @@ client_menu_text = """
 
 crear cliente - Para crear un cliente nuevo
 modificar cliente - Para modificar un cliente
-mostrar todo - Para listar todos los clientes cargados en memoria
+mostrar todo - Para listar todos los clientes
 eliminar cliente - Para eliminar un cliente por codigo
-mostrar binario - Para mostrar desde archivo binario
+
+salir - Para Salir del programa
+"""
+
+# menu de Pedidos
+pedidos_menu_text = """
+------------------- Menu Pedidos ---------------------------
+
+crear pedido - Para crear un pedido nuevo
+modificar pedido - Para modificar un pedido
+mostrar todo - Para listar todos los pedidos
+eliminar pedido - Para eliminar un pedido por codigo
 
 salir - Para Salir del programa
 """
@@ -635,11 +850,6 @@ def menuProductos():
                 removeProduct()
             else:
                 print("\n\tLa lista esta vacia no se puede eliminar productos")
-        elif opcion == "mostrar binario":
-            if gestor_de_productos.validarListaVacia():
-                pass
-            else:
-                print("\n\tLa lista esta vacia no se puede mostrar binarios")
         elif opcion == "salir":
             break
 
@@ -670,16 +880,38 @@ def menuCliente():
                 deleteClient()
             else:
                 print("\n\tLa lista esta vacia no se puede eliminar clientes")
-        elif opcion == "mostrar binario":
-            if gestor_de_clientes.validarListaVacia():
-                pass
-            else:
-                print("\n\tLa lista esta vacia no se puede mostrar binarios")
         elif opcion == "salir":
             break
 
 
 # menu de gestor de Orden
+def menuPedidos():
+    pyfiglet.print_figlet(text="\tMenu\nPedidos", colors="YELLOW")
+    global pedidos_menu_text
+    global gestor_de_pedidos
+    while True:
+        print(pedidos_menu_text)
+        opcion = input("Escriba la opcion que desea seleccionar: ")
+        opcion = opcion.lower()
+        if opcion == "crear pedido":
+            createOrder()
+        elif opcion == "modificar pedido":
+            if gestor_de_pedidos.validarListaVacia():
+                pass
+            else:
+                print("\n\tLa lista esta vacia no se puede modificar pedidos")
+        elif opcion == "mostrar todo":
+            if gestor_de_pedidos.validarListaVacia():
+                gestor_de_pedidos.mostrar_todos()
+            else:
+                print("\n\tLa lista esta vacia no se pueden mostrar pedidos")
+        elif opcion == "eliminar pedido":
+            if gestor_de_pedidos.validarListaVacia():
+                pass
+            else:
+                print("\n\tLa lista esta vacia no se puede eliminar pedidos")
+        elif opcion == "salir":
+            break
 
 
 def mainMenu():
@@ -692,7 +924,8 @@ def mainMenu():
 
     while True:
         # grafico ASCII
-        pyfiglet.print_figlet(text="La Despensita\nby Franco Monzon", colors="RED")
+        pyfiglet.print_figlet(
+            text="La Despensita\nby Franco Monzon", colors="RED")
         # Imprimir Menu
         print(menu)
         opcion = intValidate(
@@ -703,7 +936,7 @@ def mainMenu():
         if opcion == 2:
             menuCliente()
         if opcion == 3:
-            createOrder()
+            menuPedidos()
         if opcion == 4:
             pyfiglet.print_figlet(
                 text="Gracias !!! \nVuelva Pronto", font="slant", colors="BLUE"
@@ -712,5 +945,4 @@ def mainMenu():
 
 
 permanenciaDeArchivos()
-createOrder()
 mainMenu()
