@@ -256,9 +256,6 @@ class orderGestor:
         else:
             return None
 
-    def eliminar_pedido(self, pedido_a_eliminar: Order):
-        self.pedidos.remove(pedido_a_eliminar)
-
     def mostrar_todos(self):
         if self.pedidos:
             print("Listando los Pedidos disponibles")
@@ -271,8 +268,8 @@ class orderGestor:
                 + colors.RESET
             )
 
-    def mostrar_simplificado(self): tr
-       if self.pedidos:
+    def mostrar_simplificado(self):
+        if self.pedidos:
             for pedido in self.pedidos:
                 print(pedido.resumenOrden())
         else:
@@ -283,11 +280,6 @@ class orderGestor:
             if pedido.id_order == codigo_a_buscar:
                 return pedido
         return None
-
-    def buscarClientOrder(self, buscar_id_cliente):
-        for cliente in self.pedidos:
-            pass
-            # if buscar_id_cliente == pedi
 
     def create_order_cod(self):
         return len(self.pedidos) + 1
@@ -912,13 +904,6 @@ def updateOrder():
         if cliente_encontrado:
             pedido_encontrado.customer = cliente_encontrado.surname_name
             print(gestor_de_pedidos.pedidos)
-        else:
-            print(
-                colors.FAIL,
-                "El DNI cliente no se encontro o no existe, no se ha actualizado",
-                colors.RESET,
-            )
-            pedido_encontrado.customer = ""
             print(gestor_de_pedidos.pedidos)
 
             lista_productos = updateCarrito(pedido_encontrado.product_list)
@@ -952,6 +937,7 @@ def updateOrder():
                     pedido_encontrado.extra_charge = opcion
                     pedido_encontrado.total = total
                     escribir_en_binario_pedidos()
+                    break
 
                 else:
                     cargo = subtotal * opcion / 100
@@ -964,6 +950,33 @@ def updateOrder():
                     pedido_encontrado.subtotal = subtotal
                     pedido_encontrado.extra_charge = opcion
                     pedido_encontrado.total = total
+                    escribir_en_binario_pedidos()
+                    break
+
+        else:
+            print(
+                colors.FAIL,
+                "El DNI cliente no se encontro o no existe, no se ha actualizado",
+                colors.RESET,
+            )
+
+
+# Delete Cliente
+def deleteOrder():
+    global gestor_de_pedidos
+    gestor_de_pedidos.mostrar_simplificado()
+    code = intValidate("Ingrese el ID del Pedido que desea Eliminar: ")
+    pedido_encontrado = gestor_de_pedidos.buscar_por_codigo(code)
+    if pedido_encontrado:
+        opcion = input(f"\n\tDesea eliminar ?\n\n{pedido_encontrado}\nS/n: ")
+        if opcion.lower() in ("si", "s", "y", "yes" "ye"):
+            gestor_de_pedidos.pedidos.remove(pedido_encontrado)
+            escribir_en_binario_pedidos()
+            print(f"\n\tSe ha eliminado de la lista:\n{pedido_encontrado}")
+        else:
+            print("El pedido no se ha sido eliminado...")
+    else:
+        print("El codigo no fue encontrado!")
 
 
 # menu de Producto
@@ -1096,7 +1109,7 @@ def menuPedidos():
                 print("\n\tLa lista esta vacia no se pueden mostrar pedidos")
         elif opcion == "eliminar pedido":
             if gestor_de_pedidos.validarListaVacia():
-                pass
+                deleteOrder()
             else:
                 print("\n\tLa lista esta vacia no se puede eliminar pedidos")
         elif opcion == "salir":
