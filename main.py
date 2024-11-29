@@ -62,19 +62,18 @@ class Order:
         charge: float,
         subtotal: float,
         total: float,
-        fecha_edit: bool,
     ):
         self.id_order = int(cod)
         self.customer = customer
         self.product_list = product_list
         self.order_date = Fecha()
-        self.order_date_edit = bool(fecha_edit)
+        self.fecha_edit = Fecha()
+        self.order_date_edit = False
         self.extra_charge = float(charge)
         self.subtotal = float(subtotal)
         self.total = float(total)
         # --------------
         self.len_product_list = len(product_list)
-        # Agregar la fecha si esta editado
 
     def __repr__(self) -> str:
         if self.order_date_edit:
@@ -83,7 +82,7 @@ class Order:
                 f"          ID del Pedido: {self.id_order}\n"
                 f"══════════════════════════════════════════\n"
                 f" Fecha del Pedido:     {self.order_date}\n"
-                f" Ultima Modificacion:  {self.order_date}\n"
+                f" Ultima Modificacion:  {self.fecha_edit}\n"
                 f" Cliente:              {self.customer}\n"
                 f" Subtotal:             {self.subtotal}\n"
                 f" Cargos:               {self.extra_charge}%\n"
@@ -106,18 +105,26 @@ class Order:
             )
 
     def mostrarCarritoOrder(self):
-        print("Carrito del Cliente")
-        print(
-            f"DNI: {
-                self.id_order} - Fecha: {self.order_date} - Cliente: {self.customer}:"
-        )
-        for producto in self.product_list:
-            print(f"\t- {producto.product_name} ${producto.product_price}")
+        if self.order_date_edit:
+            print("Carrito del Cliente")
+            print(
+                f"DNI: {
+                    self.id_order} - Fecha: {self.order_date} - Ult. Modificacion: {self.fecha_edit} - Cliente: {self.customer} - Subtotal: ${self.subtotal} - Cargo: - {self.extra_charge}% - TOTAL: ${self.total} :"
+            )
+            for producto in self.product_list:
+                print(f"\t- {producto.product_name} ${producto.product_price}")
+        else:
+            print("Carrito del Cliente")
+            print(
+                f"DNI: {
+                    self.id_order} - Fecha: {self.order_date} - Cliente: {self.customer} - Subtotal: ${self.subtotal} - Cargo: - {self.extra_charge}% - TOTAL: ${self.total} :"
+            )
+            for producto in self.product_list:
+                print(f"\t- {producto.product_name} ${producto.product_price}")
 
     def resumenOrden(self):
-        return (
-            f"ID: {self.id_order} - Fecha: {self.order_date} - Cliente: {self.customer}"
-        )
+        return f"ID: {
+            self.id_order} - Fecha: {self.order_date} - Cliente: {self.customer}"
 
 
 # Subrrayado de texto
@@ -445,7 +452,7 @@ def validateClientName():
 
 def validateProductName() -> str:
     while True:
-        name = input("Ingrese el nombre del Producto : ")
+        name = input("Ingrese el nombre del Ptroducto : ")
         if len(name) < 51:
             return name
         else:
@@ -502,12 +509,10 @@ def createProduct():
 def modificarProducto():
     global gestor_de_productos
     gestor_de_productos.mostrar_simplificado()
-    product_code = intValidate(
-        "Ingrese el codigo del Producto que desea modificar: ")
+    product_code = intValidate("Ingrese el codigo del Producto que desea modificar: ")
     producto_encontrado = gestor_de_productos.buscar_por_codigo(product_code)
     if producto_encontrado:
-        nuevo_nombre = input(
-            "Ingrese el nuevo nombre - (Enter para dejar el actual): ")
+        nuevo_nombre = input("Ingrese el nuevo nombre - (Enter para dejar el actual): ")
         precio_confirm = input("Desea cambiar el Precio del Producto ? S/n ")
         if precio_confirm.lower() in ("no", "n"):
             nuevo_precio = ""
@@ -588,12 +593,10 @@ def createClient():
 def updateClient():
     global gestor_de_clientes
     gestor_de_clientes.mostrar_simplificado()
-    client_code = intValidate(
-        "Ingrese el DNI del Cliente que desea modificar: ")
+    client_code = intValidate("Ingrese el DNI del Cliente que desea modificar: ")
     client_encontrado = gestor_de_clientes.buscar_por_codigo(client_code)
     if client_encontrado:
-        nuevo_nombre = input(
-            "Ingrese el nuevo nombre - (Enter para dejar el actual): ")
+        nuevo_nombre = input("Ingrese el nuevo nombre - (Enter para dejar el actual): ")
         dni_confirm = input(
             "Desea cambiar el DNI y Fecha de Nacimiento del Cliente ? S/n "
         )
@@ -721,8 +724,7 @@ def createOrder():
             prod_code = intValidate(
                 "Ingrese el Codigo del Producto que desee agregar: "
             )
-            producto_encontrado = gestor_de_productos.buscar_por_codigo(
-                prod_code)
+            producto_encontrado = gestor_de_productos.buscar_por_codigo(prod_code)
             if producto_encontrado:
                 CARRITO_DE_PRODUCTOS.append(producto_encontrado)
                 if len(CARRITO_DE_PRODUCTOS) > 1:
@@ -774,7 +776,6 @@ def createOrder():
                                 opcion,
                                 subtotal,
                                 total,
-                                False,
                             )
                             gestor_de_pedidos.pedidos.append(new_pedido)
                             escribir_en_binario_pedidos()
@@ -793,7 +794,6 @@ def createOrder():
                                 float(opcion),
                                 float(subtotal),
                                 float(total),
-                                False,
                             )
                             print(new_pedido)
                             gestor_de_pedidos.pedidos.append(new_pedido)
@@ -821,12 +821,12 @@ def readOrder():
         # simplificado
         gestor_de_pedidos.mostrar_simplificado()
         opcion = intValidate(
-            "Ingrese el ID del Pedido para mostrar el Carrito del Cliente | '4' para Salir: "
+            "Ingrese el ID del Pedido para mostrar el Carrito del Cliente | '0' para Salir: "
         )
         order_encontrada = gestor_de_pedidos.buscar_por_codigo(opcion)
         if order_encontrada:
             order_encontrada.mostrarCarritoOrder()
-        elif opcion == 4:
+        elif opcion == 0:
             break
         else:
             print(
@@ -864,8 +864,7 @@ def updateCarrito(carrito):
         if producto_encontrado != -1:
             print(producto_encontrado)
             gestor_de_productos.mostrar_simplificado()
-            buscar_nuevo_producto = intValidate(
-                "Ingrese el ID del Producto nuevo: ")
+            buscar_nuevo_producto = intValidate("Ingrese el ID del Producto nuevo: ")
             update_product = gestor_de_productos.buscar_por_codigo(
                 buscar_nuevo_producto
             )
@@ -892,19 +891,16 @@ def updateOrder():
     global gestor_de_pedidos
     global gestor_de_clientes
     gestor_de_pedidos.mostrar_simplificado()
-    buscar_pedido = intValidate(
-        "Ingrese el ID del Pedido que desea modificar: ")
+    buscar_pedido = intValidate("Ingrese el ID del Pedido que desea modificar: ")
     pedido_encontrado = gestor_de_pedidos.buscar_por_codigo(buscar_pedido)
     if pedido_encontrado:
         gestor_de_clientes.mostrar_simplificado()
         buscar_cliente = intValidate(
-            "Ingrese el DNI del cliente para remplazar: ")
-        cliente_encontrado = gestor_de_clientes.buscar_por_codigo(
-            buscar_cliente)
+            "Ingrese el DNI del si lo quiere reemplazar cliente para remplazar, sino indique el anterior: "
+        )
+        cliente_encontrado = gestor_de_clientes.buscar_por_codigo(buscar_cliente)
         if cliente_encontrado:
             pedido_encontrado.customer = cliente_encontrado.surname_name
-            print(gestor_de_pedidos.pedidos)
-            print(gestor_de_pedidos.pedidos)
 
             lista_productos = updateCarrito(pedido_encontrado.product_list)
             print(lista_productos)
@@ -931,8 +927,10 @@ def updateOrder():
                     print(f"\n\t- El Subtotal es de ${subtotal}")
                     print(f"\t- El Cargo es de {opcion}%")
                     print(f"\t- El Total es de: ${total}")
+                    fecha_modificada = Fecha()
 
                     pedido_encontrado.order_date_edit = True
+                    pedido_encontrado.fecha_edit = fecha_modificada
                     pedido_encontrado.subtotal = subtotal
                     pedido_encontrado.extra_charge = opcion
                     pedido_encontrado.total = total
@@ -945,8 +943,10 @@ def updateOrder():
                     print(f"- El Subtotal es de {subtotal}")
                     print(f"- El Cargo es de {opcion}%")
                     print(f"- El Total es de: ${total}")
+                    fecha_modificada = Fecha()
 
                     pedido_encontrado.order_date_edit = True
+                    pedido_encontrado.fecha_edit = fecha_modificada
                     pedido_encontrado.subtotal = subtotal
                     pedido_encontrado.extra_charge = opcion
                     pedido_encontrado.total = total
@@ -959,6 +959,13 @@ def updateOrder():
                 "El DNI cliente no se encontro o no existe, no se ha actualizado",
                 colors.RESET,
             )
+
+    else:
+        print(
+            colors.FAIL,
+            "El Pedido no se encontro o no existe, no se ha actualizado",
+            colors.RESET,
+        )
 
 
 # Delete Cliente
@@ -977,6 +984,53 @@ def deleteOrder():
             print("El pedido no se ha sido eliminado...")
     else:
         print("El codigo no fue encontrado!")
+
+
+# ordenar por TOTAL
+def mezclar_por_total(lista, inicio, medio, fin):
+    izquierda = lista[inicio : medio + 1]
+    derecha = lista[medio + 1 : fin + 1]
+
+    i = j = 0
+    k = inicio
+
+    # Mezcla las dos mitades
+    while i < len(izquierda) and j < len(derecha):
+        if izquierda[i].total <= derecha[j].total:
+            lista[k] = izquierda[i]
+            i += 1
+        else:
+            lista[k] = derecha[j]
+            j += 1
+        k += 1
+
+    # Copia los elementos restantes de la mitad izquierda, si los hay
+    while i < len(izquierda):
+        lista[k] = izquierda[i]
+        i += 1
+        k += 1
+
+    # Copia los elementos restantes de la mitad derecha, si los hay
+    while j < len(derecha):
+        lista[k] = derecha[j]
+        j += 1
+        k += 1
+
+
+def marge_sort_total_order(lista, inicio, fin):
+    if inicio < fin:
+        medio = (inicio + fin) // 2  # Encuentra el punto medio
+        marge_sort_total_order(lista, inicio, medio)
+        marge_sort_total_order(lista, medio + 1, fin)
+
+        mezclar_por_total(lista, inicio, medio, fin)
+
+
+def ordenar_por_merge_sort_por_total():
+    global gestor_de_pedidos
+    lista_de_pedidos = gestor_de_pedidos.pedidos
+    marge_sort_total_order(lista_de_pedidos, 0, len(lista_de_pedidos) - 1)
+    print(lista_de_pedidos)
 
 
 # menu de Producto
@@ -1009,6 +1063,7 @@ pedidos_menu_text = """
 
 crear pedido - Para crear un pedido nuevo
 modificar pedido - Para modificar un pedido
+total margesort - Mostrar totales con ordenamiento MARGE SORT
 mostrar todo - Para listar todos los pedidos
 mostrar simplificado - Para mas detalles de los pedidos
 eliminar pedido - Para eliminar un pedido por codigo
@@ -1107,6 +1162,11 @@ def menuPedidos():
                 readOrder()
             else:
                 print("\n\tLa lista esta vacia no se pueden mostrar pedidos")
+        elif opcion == "total margesort":
+            if gestor_de_pedidos.validarListaVacia():
+                ordenar_por_merge_sort_por_total()
+            else:
+                print("\n\tLa lista esta vacia no se pueden mostrar pedidos")
         elif opcion == "eliminar pedido":
             if gestor_de_pedidos.validarListaVacia():
                 deleteOrder()
@@ -1126,8 +1186,7 @@ def mainMenu():
 
     while True:
         # grafico ASCII
-        pyfiglet.print_figlet(
-            text="La Despensita\nby Franco Monzon", colors="RED")
+        pyfiglet.print_figlet(text="La Despensita\nby Franco Monzon", colors="RED")
         # Imprimir Menu
         print(menu)
         opcion = intValidate(
