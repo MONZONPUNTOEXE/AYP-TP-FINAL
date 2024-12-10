@@ -511,20 +511,25 @@ def createProduct():
             break
 
 
-def updateStock(product, stock):
-    if product > 0:
-        product += stock
+def updateStock(product, update_stock, entrada=False, salida=False):
+    if entrada:
+        product += update_stock
         return product
-    elif product < 0:
-        product -= stock
-        if product < 0:
+    elif salida:
+        # Verifica los valores de product y update_stock
+        print(f"Producto: {product}, Stock a actualizar: {update_stock}")
+        if product < update_stock:
             print(f"El stock actual es ({product})")
-            print(f"Y quiere egresar ({stock})")
+            print(f"Y quiere egresar ({update_stock})")
             print("Su Stock es menor al monto que desea egresar")
             print("Intentelo nuevamente")
             return None
         else:
+            product -= update_stock
             return product
+    else:
+        print(f"{colors.FAIL} Hubo un error, no hay entrada ni salida verdadera {
+              colors.RESET}")
 
 
 alfajores = 100
@@ -533,11 +538,11 @@ ciruelas = 560
 
 ingresan_alfajores = 47
 ingresan_empanadas = 560
-ingresan_ciruelas = 50
+ingresan_ciruelas = 570
 
-alfajores = updateStock(alfajores, ingresan_alfajores)
-empanadas = updateStock(empanadas, ingresan_empanadas)
-ciruelas = updateStock(ciruelas, ingresan_ciruelas)
+alfajores = updateStock(alfajores, ingresan_alfajores, entrada=True)
+empanadas = updateStock(empanadas, ingresan_empanadas, entrada=True)
+ciruelas = updateStock(ciruelas, ingresan_ciruelas, entrada=False, salida=True)
 
 print("Ingresan")
 print(alfajores)
