@@ -13,23 +13,27 @@ class colors:
 
 
 class Producto:
-    def __init__(self, cod, name, price):
-        self.ean_code = int(cod)
+    def __init__(self, cod, name: str, cost_price: float, price: float, stock: int):
+        self.ref_code = int(cod)
         self.product_name = name
+        self.product_cost_price = float(cost_price)
         self.product_price = float(price)
+        self.stock = int(stock)
 
     def __repr__(self) -> str:
         return (
             f"══════════════════════════════════════════\n"
             f"          Producto: {self.product_name}\n"
             f"══════════════════════════════════════════\n"
-            f"  Ean Code:      {self.ean_code}\n"
+            f"  Ref Code:      {self.ref_code}\n"
+            f"  Costo:        ${self.product_cost_price}\n"
             f"  Precio:       ${self.product_price}\n"
+            f"  Stock:         ({self.stock})\n"
             f"══════════════════════════════════════════\n"
         )
 
     def resumenProducto(self):
-        return f"{self.ean_code} - {self.product_name} - ${self.product_price}"
+        return f"{self.ref_code} - {self.product_name} - ${self.product_cost_price} ${self.product_price} Stock: ({self.stock})"
 
 
 # Clients Class
@@ -175,7 +179,7 @@ class gestorProductos:
 
     def buscar_por_codigo(self, codigo_a_buscar: int):
         for producto in self.productos:
-            if producto.ean_code == codigo_a_buscar:
+            if producto.ref_code == codigo_a_buscar:
                 return producto
         return None
 
@@ -493,8 +497,10 @@ def createProduct():
     while True:
         cod = gestor_de_productos.obtener_nuevo_codigo()
         name = validateProductName()
-        price = floatValidate("Ingrese el precio del Producto : ")
-        new_product = Producto(cod, name, price)
+        cost_price = floatValidate("Ingrese el costo del Producto : ")
+        price = floatValidate("Ingrese el precio de venta del Producto : ")
+        stock = intValidate("Ingrese el Stock del Producto: ")
+        new_product = Producto(cod, name, cost_price, price, stock)
         gestor_de_productos.productos.append(new_product)
         escribir_en_binario_productos()
         print(colors.OK, "Se ha creado un nuevo Producto", colors.RESET)
@@ -503,6 +509,67 @@ def createProduct():
                      len(gestor_de_productos.productos)}) Productos desea ingresar mas ?: s/n {colors.RESET}")
         if user.lower() == "n":
             break
+
+
+def updateStock(product, stock):
+    if product > 0:
+        product += stock
+        return product
+    elif product < 0:
+        product -= stock
+        if product < 0:
+            print(f"El stock actual es ({product})")
+            print(f"Y quiere egresar ({stock})")
+            print("Su Stock es menor al monto que desea egresar")
+            print("Intentelo nuevamente")
+            return None
+        else:
+            return product
+
+
+alfajores = 100
+empanadas = 80
+ciruelas = 560
+
+ingresan_alfajores = 47
+ingresan_empanadas = 560
+ingresan_ciruelas = 50
+
+alfajores = updateStock(alfajores, ingresan_alfajores)
+empanadas = updateStock(empanadas, ingresan_empanadas)
+ciruelas = updateStock(ciruelas, ingresan_ciruelas)
+
+print("Ingresan")
+print(alfajores)
+print(empanadas)
+print(ciruelas)
+
+print("Egresan")
+ingresan_alfajores = -5
+ingresan_empanadas = -650
+ingresan_ciruelas = 650
+
+alfajores = updateStock(alfajores, ingresan_alfajores)
+empanadas = updateStock(empanadas, ingresan_empanadas)
+ciruelas = updateStock(ciruelas, ingresan_ciruelas)
+
+print(alfajores)
+print(empanadas)
+print(ciruelas)
+
+
+def manualUpdateStock():
+    global gestor_de_productos
+    gestor_de_productos.mostrar_simplificado()
+    product_code = intValidate(
+        "Ingrese el codigo del Producto que desea modificar su stock: "
+    )
+    producto_encontrado = gestor_de_productos.buscar_por_codigo(product_code)
+    if producto_encontrado:
+        nuevo_nombre = input("Ingrese el nuevo nombre - (Enter para dejar el actual): ")
+        precio_confirm = input("Desea cambiar el Precio del Producto ? S/n ")
+        if precio_confirm.lower() in ("no", "n"):
+            nuevo_precio = ""
 
 
 # Update Producto
@@ -852,7 +919,7 @@ def updateCarrito(carrito):
         i = 1
         for producto in carrito:
             print(
-                f"\t- Indice: {(i)} ID: {producto.ean_code} {
+                f"\t- Indice: {(i)} ID: {producto.ref_code} {
                     producto.product_name} ${producto.product_price}"
             )
             i += 1
@@ -1165,6 +1232,7 @@ def menuPedidos():
         elif opcion == "total margesort":
             if gestor_de_pedidos.validarListaVacia():
                 ordenar_por_merge_sort_por_total()
+                permanenciaDeArchivos()
             else:
                 print("\n\tLa lista esta vacia no se pueden mostrar pedidos")
         elif opcion == "eliminar pedido":
