@@ -5,9 +5,6 @@ import re
 import time
 from datetime import datetime
 
-print(time.asctime())
-print(time.clock_gettime(5))
-
 
 class colors:
     OK = "\033[92m"  # GREEN
@@ -24,23 +21,41 @@ class Producto:
         self.product_price = float(price)
         self.stock = int(stock)
         self.date = Fecha()
-        self.date_product_edit = Fecha()
+        self.date_edit = Fecha()
+        self.date_product_edit = False
 
     def __repr__(self) -> str:
-        return (
-            f"══════════════════════════════════════════\n"
-            f"          Producto: {self.product_name}\n"
-            f"══════════════════════════════════════════\n"
-            f"  Ref Code:      {self.ref_code}\n"
-            f"  Ingreso:      {self.date}\n"
-            f"  Costo:        ${self.product_cost_price}\n"
-            f"  Precio:       ${self.product_price}\n"
-            f"  Stock:        ({self.stock})\n"
-            f"══════════════════════════════════════════\n"
-        )
+        if self.date_product_edit:
+            return (
+                f"══════════════════════════════════════════\n"
+                f"          Producto: {self.product_name}\n"
+                f"══════════════════════════════════════════\n"
+                f"  Ref Code:             {self.ref_code}\n"
+                f"  Ingreso:              {self.date}\n"
+                f"  Ultima Modificacion:  {self.date_edit}\n"
+                f"  Costo:                ${self.product_cost_price}\n"
+                f"  Precio:               ${self.product_price}\n"
+                f"  Stock:                ({self.stock})\n"
+                f"══════════════════════════════════════════\n"
+            )
+        else:
+            return (
+                f"══════════════════════════════════════════\n"
+                f"          Producto: {self.product_name}\n"
+                f"══════════════════════════════════════════\n"
+                f"  Ref Code:     {self.ref_code}\n"
+                f"  Ingreso:      {self.date}\n"
+                f"  Costo:        ${self.product_cost_price}\n"
+                f"  Precio:       ${self.product_price}\n"
+                f"  Stock:       ({self.stock})\n"
+                f"══════════════════════════════════════════\n"
+            )
 
     def resumenProducto(self):
-        return f"{self.ref_code} - {self.product_name} - ${self.product_cost_price} ${self.product_price} Stock: ({self.stock})"
+        if self.date_product_edit:
+            return f"{self.ref_code} - {self.product_name} - Costo: ${self.product_cost_price} Precio: ${self.product_price} Stock: ({self.stock}\nIngreso: {self.date} | Ult. Modificacion: {self.date_edit}\n\t--------------------"
+        else:
+            return f"{self.ref_code} - {self.product_name} - Costo: ${self.product_cost_price} Precio: ${self.product_price} Stock: ({self.stock}) Fecha: {self.date}\n\t--------------------"
 
 
 # Clients Class
@@ -136,6 +151,76 @@ class Order:
     def resumenOrden(self):
         return f"ID: {
             self.id_order} - Fecha: {self.order_date} - Cliente: {self.customer}"
+
+
+class Sucursal:
+    def __init__(
+        self,
+        cod: int,
+        sucursal: str,
+        product_list: list,
+        charge: float,
+        subtotal: float,
+        total: float,
+    ):
+        self.id_order = int(cod)
+        self.sucursal_name = sucursal
+        self.product_list = product_list
+        self.order_date = Fecha()
+        self.fecha_edit = Fecha()
+        self.order_date_edit = False
+        self.subtotal = float(subtotal)
+        self.total = float(total)
+        # --------------
+        self.len_product_list = len(product_list)
+
+    def __repr__(self) -> str:
+        if self.order_date_edit:
+            return (
+                f"══════════════════════════════════════════\n"
+                f"          Sucursal: {self.sucursal_name}\n"
+                f"══════════════════════════════════════════\n"
+                f" ID :                  {self.id_order}\n"
+                f" Ingreso de Sucursal:  {self.order_date}\n"
+                f" Ultima Modificacion:  {self.fecha_edit}\n"
+                f" Subtotal:             {self.subtotal}\n"
+                f" Total:                {self.total}\n"
+                f" Productos en Sucursal: ({self.len_product_list})\n"
+                f"══════════════════════════════════════════\n"
+            )
+        else:
+            return (
+                f"══════════════════════════════════════════\n"
+                f"          Sucursal: {self.sucursal_name}\n"
+                f"══════════════════════════════════════════\n"
+                f" ID :                  {self.id_order}\n"
+                f" Ingreso de Sucursal:  {self.order_date}\n"
+                f" Total:                {self.total}\n"
+                f" Productos en Carrito: ({self.len_product_list})\n"
+                f"══════════════════════════════════════════\n"
+            )
+
+    def view_product_list(self):
+        if self.order_date_edit:
+            print("Productos de la Sucursal")
+            print(
+                f"ID: {
+                    self.id_order} - Nombre: {self.sucursal_name} - Fecha: {self.order_date} - Ult. Modificacion: {self.fecha_edit}\nSubtotal: ${self.subtotal} - TOTAL: ${self.total}\n\t -----------------"
+            )
+            for producto in self.product_list:
+                print(f"\t- {producto.product_name} ${producto.product_price}")
+        else:
+            print("Productos de la Sucursal")
+            print(
+                f"ID: {
+                    self.id_order} - Nombre: {self.sucursal_name} - Fecha: {self.order_date}\nSubtotal: ${self.subtotal} - TOTAL: ${self.total}\n\t -----------------"
+            )
+            for producto in self.product_list:
+                print(f"\t- {producto.product_name} ${producto.product_price}")
+
+    def resumen_sucursal(self):
+        return f"ID: {
+            self.id_order} - Fecha: {self.order_date}"
 
 
 # Subrrayado de texto
@@ -303,6 +388,51 @@ class orderGestor:
         return len(self.pedidos) + 1
 
 
+class gestorSucursal:
+    def __init__(self) -> None:
+        self.sucursales: list[Sucursal] = []
+
+    def __str__(self) -> str:
+        if len(self.sucursales) > 0:
+            return str(self.sucursales)
+        else:
+            return colors.WARNING + "No hay sucursales actualmente" + colors.RESET
+
+    def validarListaVacia(self):
+        if len(self.sucursales) > 0:
+            return True
+        else:
+            return None
+
+    def mostrar_todos(self):
+        if self.sucursales:
+            print("Listando las Sucursales disponibles")
+            for sucursal in self.sucursales:
+                print(sucursal)
+        else:
+            print(
+                colors.WARNING
+                + "No hay Sucursales cargados hasta el momento"
+                + colors.RESET
+            )
+
+    def mostrar_simplificado(self):
+        if self.sucursales:
+            for sucursal in self.sucursales:
+                print(sucursal.resumen_sucursal())
+        else:
+            print(colors.WARNING + "La lista esta Vacia" + colors.RESET)
+
+    def buscar_por_codigo(self, codigo_a_buscar: int):
+        for sucursal in self.sucursales:
+            if sucursal.id_order == codigo_a_buscar:
+                return sucursal
+        return None
+
+    def create_sucursal_cod(self):
+        return len(self.sucursales) + 1
+
+
 class Fecha:
     def __init__(self, fecha_str: str = None):
         if not fecha_str:
@@ -337,6 +467,7 @@ class Fecha:
 gestor_de_productos = gestorProductos()
 gestor_de_clientes = gestorClientes()
 gestor_de_pedidos = orderGestor()
+gestor_de_sucursal = gestorSucursal()
 
 
 # Escribir en binario
@@ -356,6 +487,12 @@ def escribir_en_binario_pedidos():
     global gestor_de_pedidos
     with open("./bin/pedidos.bin", "wb") as bin_file:
         bin_file.write(dumps(gestor_de_pedidos.pedidos))
+
+
+def escribir_en_binario_sucursales():
+    global gestor_de_productos
+    with open("./bin/sucursales.bin", "wb") as bin_file:
+        bin_file.write(dumps(gestor_de_sucursal.sucursales))
 
 
 # Cargar binarios
@@ -565,10 +702,11 @@ def update_all_product():
             producto_encontrado.product_price = float(precio_sin_cambio)
             producto_encontrado.stock = int(stock_sin_cambio)
             print("El Producto no se ha actualizado")
-            escribir_en_binario_productos()
         else:
-            print("El Producto se ha actualizado correctamente")
+            producto_encontrado.date_product_edit = True
+            producto_encontrado.date_edit = Fecha()
             escribir_en_binario_productos()
+            print("El Producto se ha actualizado correctamente")
             print(producto_encontrado)
     else:
         print("El codigo no fue encontrado, intentelo nuevamente...")
@@ -604,8 +742,9 @@ def update_product_name():
         if decidir_cambios.lower() in ("no", "n"):
             producto_encontrado.product_name = nombre_sin_cambio
             print("El Producto no se ha actualizado")
-            escribir_en_binario_productos()
         else:
+            producto_encontrado.date_product_edit = True
+            producto_encontrado.date_edit = Fecha()
             print("El Producto se ha actualizado correctamente")
             escribir_en_binario_productos()
             print(producto_encontrado)
@@ -644,8 +783,9 @@ def update_product_cost_price():
         if decidir_cambios.lower() in ("no", "n"):
             producto_encontrado.product_cost_price = precio_sin_cambio
             print("El Producto no se ha actualizado")
-            escribir_en_binario_productos()
         else:
+            producto_encontrado.date_product_edit = True
+            producto_encontrado.date_edit = Fecha()
             print("El Producto se ha actualizado correctamente")
             escribir_en_binario_productos()
             print(producto_encontrado)
@@ -682,8 +822,9 @@ def update_product_price():
         if decidir_cambios.lower() in ("no", "n"):
             producto_encontrado.product_price = precio_sin_cambio
             print("El Producto no se ha actualizado")
-            escribir_en_binario_productos()
         else:
+            producto_encontrado.date_product_edit = True
+            producto_encontrado.date_edit = Fecha()
             print("El Producto se ha actualizado correctamente")
             escribir_en_binario_productos()
             print(producto_encontrado)
@@ -720,8 +861,9 @@ def update_product_stock():
         if decidir_cambios.lower() in ("no", "n"):
             producto_encontrado.stock = stock_sin_cambios
             print("El Stock del Producto no se ha actualizado")
-            escribir_en_binario_productos()
         else:
+            producto_encontrado.date_product_edit = True
+            producto_encontrado.date_edit = Fecha()
             print("El Stock del Producto se ha actualizado correctamente")
             escribir_en_binario_productos()
             print(producto_encontrado)
@@ -1187,7 +1329,140 @@ def deleteOrder():
         print("El codigo no fue encontrado!")
 
 
+# Funcionalidades de Sucursal
+def create_sucursal():
+    global gestor_de_sucursal
+    pyfiglet.print_figlet(text="Crear Sucursal", colors="BLUE")
+    while True:
+        cod = gestor_de_sucursal.create_sucursal_cod()
+        name = validateProductName()
+        new_sucursal = Sucursal(cod, name, [], 0, 0, 0)
+        gestor_de_sucursal.sucursales.append(new_sucursal)
+        escribir_en_binario_sucursales()
+        print(colors.OK, "Se ha creado una nueva Sucursal", colors.RESET)
+        print(new_sucursal)
+        user = input(f"{colors.WARNING}hay un total de ({
+                     len(gestor_de_sucursal.sucursales)}) Sucursales desea ingresar mas ?: s/n {colors.RESET}")
+        if user.lower() == "n":
+            break
+
+
+create_sucursal()
+gestor_de_sucursal.mostrar_todos()
+
+
+def add_sucursal_product():
+    CARRITO_DE_PRODUCTOS = []
+    if gestor_de_productos.validarListaVacia():
+        while True:
+            if len(CARRITO_DE_PRODUCTOS) > 1:
+                print(
+                    "\n\n\t----------------------------------------------------------"
+                )
+                print(
+                    f"\tHay ({len(CARRITO_DE_PRODUCTOS)}) Productos en el Carrito para {
+                        client_encontrado}\n\tEl Subtotal sin Cargos es de ${subtotalCarrito(CARRITO_DE_PRODUCTOS)}"
+                )
+                print("\t----------------------------------------------------------")
+            print("\n\t--------- Productos Disponibles -------------")
+            gestor_de_productos.mostrar_simplificado()
+            prod_code = intValidate(
+                "Ingrese el Codigo del Producto que desee agregar: "
+            )
+            producto_encontrado = gestor_de_productos.buscar_por_codigo(prod_code)
+            if producto_encontrado:
+                CARRITO_DE_PRODUCTOS.append(producto_encontrado)
+                if len(CARRITO_DE_PRODUCTOS) > 1:
+                    print(
+                        f"{colors.WARNING}Carrito Actual para {
+                            client_encontrado}{colors.RESET}: "
+                    )
+                    mostrarCarrito(CARRITO_DE_PRODUCTOS)
+                    print(
+                        f"{colors.OK}El Subtotal del Carrito es de ${
+                            subtotalCarrito(CARRITO_DE_PRODUCTOS)}\n{colors.RESET}"
+                    )
+                user = input(
+                    f"Desea ingresar mas Productos al Carrito para {
+                        client_encontrado} ?: s/n "
+                )
+                if user.lower() in ("n", "no"):
+                    subtotal = subtotalCarrito(CARRITO_DE_PRODUCTOS)
+                    print(
+                        f"\n\t --- El Subtotal del Carrito es de ${
+                            subtotal} --- "
+                    )
+                    print(
+                        "- Si desea hacer un Descuento Ingrese el porcentaje con numero negativo"
+                    )
+                    print("(Ejemplo: -5, -15, -20)")
+                    print(
+                        "- Si desea un cargo extra Ingrese el porcentaje con numero positivo"
+                    )
+                    print(
+                        "- Si no desea agregar Descuento ni Cargos Extras ingrese '0 (cero)'"
+                    )
+                    while True:
+                        opcion = floatValidate_neg()
+                        if opcion >= 1000 or opcion <= -100:
+                            print(
+                                "No puede haber un descuento mayor al 100%, tampoco un recargo mayor 1000%"
+                            )
+                        elif opcion == 0:
+                            cargo = 0
+                            total = cargo + subtotal
+                            print(f"\n\t- El Subtotal es de ${subtotal}")
+                            print(f"\t- El Cargo es de {opcion}%")
+                            print(f"\t- El Total es de: ${total}")
+                            new_pedido = Order(
+                                cod,
+                                client_encontrado,
+                                CARRITO_DE_PRODUCTOS,
+                                opcion,
+                                subtotal,
+                                total,
+                            )
+                            gestor_de_pedidos.pedidos.append(new_pedido)
+                            escribir_en_binario_pedidos()
+                            CARRITO_DE_PRODUCTOS = []
+                            return createOrder()
+                        else:
+                            cargo = subtotal * opcion / 100
+                            total = cargo + subtotal
+                            print(f"- El Subtotal es de {subtotal}")
+                            print(f"- El Cargo es de {opcion}%")
+                            print(f"- El Total es de: ${total}")
+                            new_pedido = Order(
+                                cod,
+                                client_encontrado,
+                                CARRITO_DE_PRODUCTOS,
+                                float(opcion),
+                                float(subtotal),
+                                float(total),
+                            )
+                            print(new_pedido)
+                            gestor_de_pedidos.pedidos.append(new_pedido)
+                            escribir_en_binario_pedidos()
+                            CARRITO_DE_PRODUCTOS = []
+                            return createOrder()
+            else:
+                print(
+                    colors.FAIL
+                    + "El Codigo del Producto no fue encontrado"
+                    + colors.RESET
+                )
+    else:
+        if len(gestor_de_productos.productos) == 0:
+            text = "No hay productos para seleccionar, debe cargar los Productos e intentelo nuevamente"
+            graphi(text)
+        if len(gestor_de_clientes.clientes) == 0:
+            text = "No hay Clientes para seleccionar, debe cargar los Clientes e intentelo nuevamente"
+            graphi(text)
+
+
 # ordenar por TOTAL
+
+
 def mezclar_por_total(lista, inicio, medio, fin):
     izquierda = lista[inicio : medio + 1]
     derecha = lista[medio + 1 : fin + 1]
