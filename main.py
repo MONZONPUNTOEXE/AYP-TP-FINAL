@@ -2,7 +2,11 @@ from pickle import dumps, load
 import pyfiglet
 import os
 import re
+import time
 from datetime import datetime
+
+print(time.asctime())
+print(time.clock_gettime(5))
 
 
 class colors:
@@ -19,6 +23,8 @@ class Producto:
         self.product_cost_price = float(cost_price)
         self.product_price = float(price)
         self.stock = int(stock)
+        self.date = Fecha()
+        self.date_product_edit = Fecha()
 
     def __repr__(self) -> str:
         return (
@@ -26,9 +32,10 @@ class Producto:
             f"          Producto: {self.product_name}\n"
             f"══════════════════════════════════════════\n"
             f"  Ref Code:      {self.ref_code}\n"
+            f"  Ingreso:      {self.date}\n"
             f"  Costo:        ${self.product_cost_price}\n"
             f"  Precio:       ${self.product_price}\n"
-            f"  Stock:         ({self.stock})\n"
+            f"  Stock:        ({self.stock})\n"
             f"══════════════════════════════════════════\n"
         )
 
@@ -324,7 +331,10 @@ class Fecha:
         return f"{self.dia}/{self.mes}/{self.anio}"
 
 
-# Creacion de los objetos "Gestores de Entidades" -----------------------------
+class Hora:
+    def __init__(self, hora_str: str):
+
+        # Creacion de los objetos "Gestores de Entidades" -----------------------------
 gestor_de_productos = gestorProductos()
 gestor_de_clientes = gestorClientes()
 gestor_de_pedidos = orderGestor()
@@ -454,10 +464,10 @@ def validateClientName():
             )
 
 
-def validateProductName() -> str:
+def validateProductName(msg="Ingrese el nombre no mas de 30 caracteres: ") -> str:
     while True:
-        name = input("Ingrese el nombre del Ptroducto : ")
-        if len(name) < 51:
+        name = input(msg)
+        if len(name) < 30:
             return name
         else:
             print(
@@ -511,88 +521,28 @@ def createProduct():
             break
 
 
-def updateStock(product, update_stock, entrada=False, salida=False):
-    if entrada:
-        product += update_stock
-        return product
-    elif salida:
-        # Verifica los valores de product y update_stock
-        print(f"Producto: {product}, Stock a actualizar: {update_stock}")
-        if product < update_stock:
-            print(f"El stock actual es ({product})")
-            print(f"Y quiere egresar ({update_stock})")
-            print("Su Stock es menor al monto que desea egresar")
-            print("Intentelo nuevamente")
-            return None
-        else:
-            product -= update_stock
-            return product
-    else:
-        print(f"{colors.FAIL} Hubo un error, no hay entrada ni salida verdadera {
-              colors.RESET}")
-
-
-alfajores = 100
-empanadas = 80
-ciruelas = 560
-
-ingresan_alfajores = 47
-ingresan_empanadas = 560
-ingresan_ciruelas = 570
-
-alfajores = updateStock(alfajores, ingresan_alfajores, entrada=True)
-empanadas = updateStock(empanadas, ingresan_empanadas, entrada=True)
-ciruelas = updateStock(ciruelas, ingresan_ciruelas, entrada=False, salida=True)
-
-print("Ingresan")
-print(alfajores)
-print(empanadas)
-print(ciruelas)
-
-print("Egresan")
-ingresan_alfajores = -5
-ingresan_empanadas = -650
-ingresan_ciruelas = 650
-
-alfajores = updateStock(alfajores, ingresan_alfajores)
-empanadas = updateStock(empanadas, ingresan_empanadas)
-ciruelas = updateStock(ciruelas, ingresan_ciruelas)
-
-print(alfajores)
-print(empanadas)
-print(ciruelas)
-
-
-def manualUpdateStock():
+# Update Producto ---------------
+def update_all_product():
     global gestor_de_productos
     gestor_de_productos.mostrar_simplificado()
     product_code = intValidate(
-        "Ingrese el codigo del Producto que desea modificar su stock: "
-    )
+        "Ingrese el codigo del Producto que desea modificar: ")
     producto_encontrado = gestor_de_productos.buscar_por_codigo(product_code)
     if producto_encontrado:
-        nuevo_nombre = input("Ingrese el nuevo nombre - (Enter para dejar el actual): ")
-        precio_confirm = input("Desea cambiar el Precio del Producto ? S/n ")
-        if precio_confirm.lower() in ("no", "n"):
-            nuevo_precio = ""
-
-
-# Update Producto
-def modificarProducto():
-    global gestor_de_productos
-    gestor_de_productos.mostrar_simplificado()
-    product_code = intValidate("Ingrese el codigo del Producto que desea modificar: ")
-    producto_encontrado = gestor_de_productos.buscar_por_codigo(product_code)
-    if producto_encontrado:
-        nuevo_nombre = input("Ingrese el nuevo nombre - (Enter para dejar el actual): ")
-        precio_confirm = input("Desea cambiar el Precio del Producto ? S/n ")
-        if precio_confirm.lower() in ("no", "n"):
-            nuevo_precio = ""
-        else:
-            nuevo_precio = floatValidate("Ingrese el nuevo precio: ")
+        print("Nombre del Producto Actual", producto_encontrado.product_name)
+        nuevo_nombre = validateProductName("Ingrese el nuevo nombre: ")
+        print("Precio de Costo del Producto",
+              producto_encontrado.product_cost_price)
+        nuevo_cost_price = floatValidate("Ingrese el nuevo precio de costo: ")
+        print("Precio Final del Producto", producto_encontrado.product_price)
+        nuevo_precio = floatValidate("Ingrese el nuevo precio: ")
+        print("Stock actual del Producto", producto_encontrado.stock)
+        nuevo_stock = intValidate("Ingrese el nuevo Stock: ")
         # cambios anteriores
         nombre_sin_cambio = producto_encontrado.product_name
+        cost_price_sin_cambio = producto_encontrado.product_cost_price
         precio_sin_cambio = producto_encontrado.product_price
+        stock_sin_cambio = producto_encontrado.stock
 
         text_sin_cambios = "Sin aplicar Cambios"
         graphi(text_sin_cambios)
@@ -600,6 +550,132 @@ def modificarProducto():
 
         if nuevo_nombre:
             producto_encontrado.product_name = nuevo_nombre
+        if nuevo_cost_price:
+            producto_encontrado.product_cost_price = float(nuevo_cost_price)
+        if nuevo_precio:
+            producto_encontrado.product_price = float(nuevo_precio)
+        if nuevo_stock:
+            producto_encontrado.stock = int(nuevo_stock)
+
+        text_con_cambios = "Aplicando los cambios... "
+        graphi(text_con_cambios)
+        print(producto_encontrado)
+
+        decidir_cambios = input("Desea guardar los cambios ? - (Si/no)")
+        if decidir_cambios.lower() in ("no", "n"):
+            producto_encontrado.product_name = nombre_sin_cambio
+            producto_encontrado.product_cost_price = float(
+                cost_price_sin_cambio)
+            producto_encontrado.product_price = float(precio_sin_cambio)
+            producto_encontrado.stock = int(stock_sin_cambio)
+            print("El Producto no se ha actualizado")
+            escribir_en_binario_productos()
+        else:
+            print("El Producto se ha actualizado correctamente")
+            escribir_en_binario_productos()
+            print(producto_encontrado)
+    else:
+        print("El codigo no fue encontrado, intentelo nuevamente...")
+
+
+def update_product_name():
+    global gestor_de_productos
+    gestor_de_productos.mostrar_simplificado()
+    product_code = intValidate(
+        "Ingrese el codigo del Producto que desea modificarle el nombre: "
+    )
+    producto_encontrado = gestor_de_productos.buscar_por_codigo(product_code)
+    if producto_encontrado:
+        print(
+            "Nombre Actual:", colors.OK, producto_encontrado.product_name, colors.RESET
+        )
+        nuevo_nombre = validateProductName("Ingrese el nuevo nombre: ")
+        # cambios anteriores
+        nombre_sin_cambio = producto_encontrado.product_name
+
+        text_sin_cambios = "Sin aplicar Cambios"
+        graphi(text_sin_cambios)
+        print(producto_encontrado)
+
+        if nuevo_nombre:
+            producto_encontrado.product_name = nuevo_nombre
+
+        text_con_cambios = "Aplicando los cambios... "
+        graphi(text_con_cambios)
+        print(producto_encontrado)
+
+        decidir_cambios = input("Desea guardar los cambios ? - (Si/no)")
+        if decidir_cambios.lower() in ("no", "n"):
+            producto_encontrado.product_name = nombre_sin_cambio
+            print("El Producto no se ha actualizado")
+            escribir_en_binario_productos()
+        else:
+            print("El Producto se ha actualizado correctamente")
+            escribir_en_binario_productos()
+            print(producto_encontrado)
+    else:
+        print("El codigo no fue encontrado, intentelo nuevamente...")
+
+
+def update_product_cost_price():
+    global gestor_de_productos
+    gestor_de_productos.mostrar_simplificado()
+    product_code = intValidate(
+        "Ingrese el codigo del Producto que desea modificar el costo: "
+    )
+    producto_encontrado = gestor_de_productos.buscar_por_codigo(product_code)
+    if producto_encontrado:
+        print(
+            f"Costo Actual: {colors.OK}${
+                producto_encontrado.product_cost_price}{colors.RESET}"
+        )
+        nuevo_precio = floatValidate("Ingrese el nuevo Costo del Producto: ")
+        # cambios anteriores
+        precio_sin_cambio = producto_encontrado.product_cost_price
+
+        text_sin_cambios = "Sin aplicar Cambios"
+        graphi(text_sin_cambios)
+        print(producto_encontrado)
+
+        if nuevo_precio:
+            producto_encontrado.product_cost_price = float(nuevo_precio)
+
+        text_con_cambios = "Aplicando los cambios... "
+        graphi(text_con_cambios)
+        print(producto_encontrado)
+
+        decidir_cambios = input("Desea guardar los cambios ? - (Si/no)")
+        if decidir_cambios.lower() in ("no", "n"):
+            producto_encontrado.product_cost_price = precio_sin_cambio
+            print("El Producto no se ha actualizado")
+            escribir_en_binario_productos()
+        else:
+            print("El Producto se ha actualizado correctamente")
+            escribir_en_binario_productos()
+            print(producto_encontrado)
+    else:
+        print("El codigo no fue encontrado, intentelo nuevamente...")
+
+
+def update_product_price():
+    global gestor_de_productos
+    gestor_de_productos.mostrar_simplificado()
+    product_code = intValidate(
+        "Ingrese el codigo del Producto que desea modificar: ")
+    producto_encontrado = gestor_de_productos.buscar_por_codigo(product_code)
+    if producto_encontrado:
+        print(
+            f"Precio final actual: {colors.OK}${
+                producto_encontrado.product_price}{colors.RESET}"
+        )
+        nuevo_precio = input("Ingrese el nuevo Precio Final: ")
+        # cambios anteriores
+        precio_sin_cambio = producto_encontrado.product_price
+
+        text_sin_cambios = "Sin aplicar Cambios"
+        graphi(text_sin_cambios)
+        print(producto_encontrado)
+
         if nuevo_precio:
             producto_encontrado.product_price = float(nuevo_precio)
 
@@ -609,12 +685,49 @@ def modificarProducto():
 
         decidir_cambios = input("Desea guardar los cambios ? - (Si/no)")
         if decidir_cambios.lower() in ("no", "n"):
-            producto_encontrado.product_name = nombre_sin_cambio
-            producto_encontrado.product_price = float(precio_sin_cambio)
+            producto_encontrado.product_price = precio_sin_cambio
             print("El Producto no se ha actualizado")
             escribir_en_binario_productos()
         else:
             print("El Producto se ha actualizado correctamente")
+            escribir_en_binario_productos()
+            print(producto_encontrado)
+    else:
+        print("El codigo no fue encontrado, intentelo nuevamente...")
+
+
+def update_product_stock():
+    global gestor_de_productos
+    gestor_de_productos.mostrar_simplificado()
+    product_code = intValidate(
+        "Ingrese el codigo del Producto que desea modificar su stock: "
+    )
+    producto_encontrado = gestor_de_productos.buscar_por_codigo(product_code)
+    if producto_encontrado:
+        print(f"Stock Actual: {colors.OK}${
+              producto_encontrado.stock}{colors.RESET}")
+        print(producto_encontrado.resumenProducto())
+        stock_sin_cambios = producto_encontrado.stock
+        nuevo_stock = intValidate("Ingrese el nuevo Stock: ")
+        # cambios anteriores
+        text_sin_cambios = "Sin aplicar Cambios"
+        graphi(text_sin_cambios)
+        print(producto_encontrado)
+
+        if nuevo_stock:
+            producto_encontrado.stock = nuevo_stock
+
+        text_con_cambios = "Aplicando los cambios... "
+        graphi(text_con_cambios)
+        print(producto_encontrado)
+
+        decidir_cambios = input("Desea guardar los cambios ? - (Si/no)")
+        if decidir_cambios.lower() in ("no", "n"):
+            producto_encontrado.stock = stock_sin_cambios
+            print("El Stock del Producto no se ha actualizado")
+            escribir_en_binario_productos()
+        else:
+            print("El Stock del Producto se ha actualizado correctamente")
             escribir_en_binario_productos()
             print(producto_encontrado)
     else:
@@ -637,6 +750,27 @@ def removeProduct():
             print("El Producto no ha sido eliminado...")
     else:
         print("El codigo no fue encontrado!")
+
+
+# Funciones de Stock -------------
+def updateStock(product, update_stock, entrada=False, salida=False):
+    if entrada:
+        product += update_stock
+        return product
+    elif salida:
+        if product < update_stock:
+            print(f"{colors.FAIL}El stock actual es ({product})")
+            print(f"Y quiere egresar ({update_stock})")
+            print(f"Su Stock es menor al monto que desea egresar{
+                  colors.RESET}")
+            print("Intentelo nuevamente")
+            return None
+        else:
+            product -= update_stock
+            return product
+    else:
+        print(f"{colors.FAIL}Hubo un error, no hay entrada ni salida verdadera {
+              colors.RESET}")
 
 
 # funciones de Cliente ---------------
@@ -665,10 +799,12 @@ def createClient():
 def updateClient():
     global gestor_de_clientes
     gestor_de_clientes.mostrar_simplificado()
-    client_code = intValidate("Ingrese el DNI del Cliente que desea modificar: ")
+    client_code = intValidate(
+        "Ingrese el DNI del Cliente que desea modificar: ")
     client_encontrado = gestor_de_clientes.buscar_por_codigo(client_code)
     if client_encontrado:
-        nuevo_nombre = input("Ingrese el nuevo nombre - (Enter para dejar el actual): ")
+        nuevo_nombre = input(
+            "Ingrese el nuevo nombre - (Enter para dejar el actual): ")
         dni_confirm = input(
             "Desea cambiar el DNI y Fecha de Nacimiento del Cliente ? S/n "
         )
@@ -796,7 +932,8 @@ def createOrder():
             prod_code = intValidate(
                 "Ingrese el Codigo del Producto que desee agregar: "
             )
-            producto_encontrado = gestor_de_productos.buscar_por_codigo(prod_code)
+            producto_encontrado = gestor_de_productos.buscar_por_codigo(
+                prod_code)
             if producto_encontrado:
                 CARRITO_DE_PRODUCTOS.append(producto_encontrado)
                 if len(CARRITO_DE_PRODUCTOS) > 1:
@@ -936,7 +1073,8 @@ def updateCarrito(carrito):
         if producto_encontrado != -1:
             print(producto_encontrado)
             gestor_de_productos.mostrar_simplificado()
-            buscar_nuevo_producto = intValidate("Ingrese el ID del Producto nuevo: ")
+            buscar_nuevo_producto = intValidate(
+                "Ingrese el ID del Producto nuevo: ")
             update_product = gestor_de_productos.buscar_por_codigo(
                 buscar_nuevo_producto
             )
@@ -963,14 +1101,16 @@ def updateOrder():
     global gestor_de_pedidos
     global gestor_de_clientes
     gestor_de_pedidos.mostrar_simplificado()
-    buscar_pedido = intValidate("Ingrese el ID del Pedido que desea modificar: ")
+    buscar_pedido = intValidate(
+        "Ingrese el ID del Pedido que desea modificar: ")
     pedido_encontrado = gestor_de_pedidos.buscar_por_codigo(buscar_pedido)
     if pedido_encontrado:
         gestor_de_clientes.mostrar_simplificado()
         buscar_cliente = intValidate(
             "Ingrese el DNI del si lo quiere reemplazar cliente para remplazar, sino indique el anterior: "
         )
-        cliente_encontrado = gestor_de_clientes.buscar_por_codigo(buscar_cliente)
+        cliente_encontrado = gestor_de_clientes.buscar_por_codigo(
+            buscar_cliente)
         if cliente_encontrado:
             pedido_encontrado.customer = cliente_encontrado.surname_name
 
@@ -1060,8 +1200,8 @@ def deleteOrder():
 
 # ordenar por TOTAL
 def mezclar_por_total(lista, inicio, medio, fin):
-    izquierda = lista[inicio : medio + 1]
-    derecha = lista[medio + 1 : fin + 1]
+    izquierda = lista[inicio: medio + 1]
+    derecha = lista[medio + 1: fin + 1]
 
     i = j = 0
     k = inicio
@@ -1117,6 +1257,18 @@ eliminar producto - Para eliminar un producto por codigo
 salir - Para Salir del programa
 """
 
+# Sub Menu modificar Producto
+update_product_menu_text = """
+------------------- Menu Modificar Productos ---------------------------
+cambiar nombre - Para modificar el nombre del Producto
+cambiar costo - Para modificar el costo del Producto
+cambiar precio - Para modificar el precio Final del Producto
+cambiar stock - Para modificar el stock del Producto
+cambiar todo - Para modificar todo los datos del producto
+
+atras - Para volver al menú anterior
+"""
+
 # menu de Cliente
 client_menu_text = """
 ------------------- Menu Cliente ---------------------------
@@ -1156,7 +1308,7 @@ def menuProductos():
             createProduct()
         elif opcion == "modificar producto":
             if gestor_de_productos.validarListaVacia():
-                modificarProducto()
+                update_product_menu()
             else:
                 print("\n\tLa lista esta vacia no se puede modificar productos")
         elif opcion == "mostrar todo":
@@ -1171,6 +1323,30 @@ def menuProductos():
                 print("\n\tLa lista esta vacia no se puede eliminar productos")
         elif opcion == "salir":
             break
+
+
+def update_product_menu():
+    pyfiglet.print_figlet(text="\tMenu\nModificar Productos", colors="GREEN")
+    global update_product_menu_text
+    global gestor_de_productos
+    while True:
+        print(update_product_menu_text)
+        opcion = input("Escriba la opcion que desea seleccionar: ")
+        opcion = opcion.lower()
+        if opcion == "cambiar nombre":
+            update_product_name()
+        elif opcion == "cambiar costo":
+            update_product_cost_price()
+        elif opcion == "cambiar precio":
+            update_product_price()
+        elif opcion == "cambiar stock":
+            update_product_stock()
+        elif opcion == "cambiar todo":
+            update_all_product()
+        elif opcion == "atras":
+            break
+        else:
+            print(colors.FAIL, "Opcion incorrecta, intentelo nuecamente", colors.RESET)
 
 
 # menu gestor de cliente
@@ -1259,7 +1435,8 @@ def mainMenu():
 
     while True:
         # grafico ASCII
-        pyfiglet.print_figlet(text="La Despensita\nby Franco Monzon", colors="RED")
+        pyfiglet.print_figlet(
+            text="La Despensita\nby Franco Monzon", colors="RED")
         # Imprimir Menu
         print(menu)
         opcion = intValidate(
