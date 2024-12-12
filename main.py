@@ -307,6 +307,8 @@ class Fecha:
     def __init__(self, fecha_str: str = None):
         if not fecha_str:
             hoy = datetime.now()
+            hora = time.localtime()
+            self.hora = time.strftime("%H:%M:%S", hora)
             self.dia = hoy.day
             self.mes = hoy.month
             self.anio = hoy.year
@@ -328,13 +330,10 @@ class Fecha:
         return re.match(patron, fecha)
 
     def __str__(self):
-        return f"{self.dia}/{self.mes}/{self.anio}"
+        return f"{self.dia}/{self.mes}/{self.anio} {self.hora}"
 
 
-class Hora:
-    def __init__(self, hora_str: str):
-
-        # Creacion de los objetos "Gestores de Entidades" -----------------------------
+# Creacion de los objetos "Gestores de Entidades" -----------------------------
 gestor_de_productos = gestorProductos()
 gestor_de_clientes = gestorClientes()
 gestor_de_pedidos = orderGestor()
@@ -525,14 +524,12 @@ def createProduct():
 def update_all_product():
     global gestor_de_productos
     gestor_de_productos.mostrar_simplificado()
-    product_code = intValidate(
-        "Ingrese el codigo del Producto que desea modificar: ")
+    product_code = intValidate("Ingrese el codigo del Producto que desea modificar: ")
     producto_encontrado = gestor_de_productos.buscar_por_codigo(product_code)
     if producto_encontrado:
         print("Nombre del Producto Actual", producto_encontrado.product_name)
         nuevo_nombre = validateProductName("Ingrese el nuevo nombre: ")
-        print("Precio de Costo del Producto",
-              producto_encontrado.product_cost_price)
+        print("Precio de Costo del Producto", producto_encontrado.product_cost_price)
         nuevo_cost_price = floatValidate("Ingrese el nuevo precio de costo: ")
         print("Precio Final del Producto", producto_encontrado.product_price)
         nuevo_precio = floatValidate("Ingrese el nuevo precio: ")
@@ -564,8 +561,7 @@ def update_all_product():
         decidir_cambios = input("Desea guardar los cambios ? - (Si/no)")
         if decidir_cambios.lower() in ("no", "n"):
             producto_encontrado.product_name = nombre_sin_cambio
-            producto_encontrado.product_cost_price = float(
-                cost_price_sin_cambio)
+            producto_encontrado.product_cost_price = float(cost_price_sin_cambio)
             producto_encontrado.product_price = float(precio_sin_cambio)
             producto_encontrado.stock = int(stock_sin_cambio)
             print("El Producto no se ha actualizado")
@@ -660,8 +656,7 @@ def update_product_cost_price():
 def update_product_price():
     global gestor_de_productos
     gestor_de_productos.mostrar_simplificado()
-    product_code = intValidate(
-        "Ingrese el codigo del Producto que desea modificar: ")
+    product_code = intValidate("Ingrese el codigo del Producto que desea modificar: ")
     producto_encontrado = gestor_de_productos.buscar_por_codigo(product_code)
     if producto_encontrado:
         print(
@@ -799,12 +794,10 @@ def createClient():
 def updateClient():
     global gestor_de_clientes
     gestor_de_clientes.mostrar_simplificado()
-    client_code = intValidate(
-        "Ingrese el DNI del Cliente que desea modificar: ")
+    client_code = intValidate("Ingrese el DNI del Cliente que desea modificar: ")
     client_encontrado = gestor_de_clientes.buscar_por_codigo(client_code)
     if client_encontrado:
-        nuevo_nombre = input(
-            "Ingrese el nuevo nombre - (Enter para dejar el actual): ")
+        nuevo_nombre = input("Ingrese el nuevo nombre - (Enter para dejar el actual): ")
         dni_confirm = input(
             "Desea cambiar el DNI y Fecha de Nacimiento del Cliente ? S/n "
         )
@@ -932,8 +925,7 @@ def createOrder():
             prod_code = intValidate(
                 "Ingrese el Codigo del Producto que desee agregar: "
             )
-            producto_encontrado = gestor_de_productos.buscar_por_codigo(
-                prod_code)
+            producto_encontrado = gestor_de_productos.buscar_por_codigo(prod_code)
             if producto_encontrado:
                 CARRITO_DE_PRODUCTOS.append(producto_encontrado)
                 if len(CARRITO_DE_PRODUCTOS) > 1:
@@ -1073,8 +1065,7 @@ def updateCarrito(carrito):
         if producto_encontrado != -1:
             print(producto_encontrado)
             gestor_de_productos.mostrar_simplificado()
-            buscar_nuevo_producto = intValidate(
-                "Ingrese el ID del Producto nuevo: ")
+            buscar_nuevo_producto = intValidate("Ingrese el ID del Producto nuevo: ")
             update_product = gestor_de_productos.buscar_por_codigo(
                 buscar_nuevo_producto
             )
@@ -1101,16 +1092,14 @@ def updateOrder():
     global gestor_de_pedidos
     global gestor_de_clientes
     gestor_de_pedidos.mostrar_simplificado()
-    buscar_pedido = intValidate(
-        "Ingrese el ID del Pedido que desea modificar: ")
+    buscar_pedido = intValidate("Ingrese el ID del Pedido que desea modificar: ")
     pedido_encontrado = gestor_de_pedidos.buscar_por_codigo(buscar_pedido)
     if pedido_encontrado:
         gestor_de_clientes.mostrar_simplificado()
         buscar_cliente = intValidate(
             "Ingrese el DNI del si lo quiere reemplazar cliente para remplazar, sino indique el anterior: "
         )
-        cliente_encontrado = gestor_de_clientes.buscar_por_codigo(
-            buscar_cliente)
+        cliente_encontrado = gestor_de_clientes.buscar_por_codigo(buscar_cliente)
         if cliente_encontrado:
             pedido_encontrado.customer = cliente_encontrado.surname_name
 
@@ -1200,8 +1189,8 @@ def deleteOrder():
 
 # ordenar por TOTAL
 def mezclar_por_total(lista, inicio, medio, fin):
-    izquierda = lista[inicio: medio + 1]
-    derecha = lista[medio + 1: fin + 1]
+    izquierda = lista[inicio : medio + 1]
+    derecha = lista[medio + 1 : fin + 1]
 
     i = j = 0
     k = inicio
@@ -1435,8 +1424,7 @@ def mainMenu():
 
     while True:
         # grafico ASCII
-        pyfiglet.print_figlet(
-            text="La Despensita\nby Franco Monzon", colors="RED")
+        pyfiglet.print_figlet(text="La Despensita\nby Franco Monzon", colors="RED")
         # Imprimir Menu
         print(menu)
         opcion = intValidate(
