@@ -18,6 +18,7 @@ class Producto:
         self.ref_code = int(cod)
         self.product_name = name
         self.product_cost_price = float(cost_price)
+        self.product_charge = 0
         self.product_price = float(price)
         self.stock = int(stock)
         self.date = Fecha()
@@ -34,6 +35,7 @@ class Producto:
                 f"  Ingreso:              {self.date}\n"
                 f"  Ultima Modificacion:  {self.date_edit}\n"
                 f"  Costo:                ${self.product_cost_price}\n"
+                f"  Cargo:                {self.product_charge}%\n"
                 f"  Precio:               ${self.product_price}\n"
                 f"  Stock:                ({self.stock})\n"
                 f"══════════════════════════════════════════\n"
@@ -45,7 +47,8 @@ class Producto:
                 f"══════════════════════════════════════════\n"
                 f"  Ref Code:     {self.ref_code}\n"
                 f"  Ingreso:      {self.date}\n"
-                f"  Costo:        ${self.product_cost_price}\n"
+                f"  Costo:        {self.product_cost_price}%\n"
+                f"  Cargo:        ${self.product_charge}\n"
                 f"  Precio:       ${self.product_price}\n"
                 f"  Stock:       ({self.stock})\n"
                 f"══════════════════════════════════════════\n"
@@ -53,9 +56,44 @@ class Producto:
 
     def resumenProducto(self):
         if self.date_product_edit:
-            return f"{self.ref_code} - {self.product_name} - Costo: ${self.product_cost_price} Precio: ${self.product_price} Stock: ({self.stock}\nIngreso: {self.date} | Ult. Modificacion: {self.date_edit}\n\t--------------------"
+            return f"{self.ref_code} - {self.product_name} - Costo: ${self.product_cost_price} - Cargo: {self.product_charge}% - Precio: ${self.product_price} Stock: ({self.stock}\nIngreso: {self.date} | Ult. Modificacion: {self.date_edit}\n\t--------------------"
         else:
-            return f"{self.ref_code} - {self.product_name} - Costo: ${self.product_cost_price} Precio: ${self.product_price} Stock: ({self.stock}) Fecha: {self.date}\n\t--------------------"
+            return f"{self.ref_code} - {self.product_name} - Costo: ${self.product_cost_price} - Cargo: {self.product_charge}% - Precio: ${self.product_price} Stock: ({self.stock}) Fecha: {self.date}\n\t--------------------"
+
+    def crear_precio_final(self):
+        if self.product_charge:
+            print(
+                "- Si desea hacer un Descuento Ingrese el porcentaje con numero negativo"
+            )
+            print("(Ejemplo: -5, -15, -20)")
+            print("- Si desea un cargo extra Ingrese el porcentaje con numero positivo")
+            print("- Si no desea agregar Descuento ni Cargos Extras ingrese '0 (cero)'")
+            while True:
+                opcion = floatValidate_neg()
+                if opcion >= 1000 or opcion <= -100:
+                    print(
+                        "No puede haber un descuento mayor al 100%, tampoco un recargo mayor 1000%"
+                    )
+                elif opcion == 0:
+                    cargo = 0
+                    subtotal = self.product_price
+                    total = cargo + subtotal
+                    print(f"\n\t- El Subtotal es de ${subtotal}")
+                    print(f"\t- El Cargo es de {opcion}%")
+                    print(f"\t- El Total es de: ${total}")
+                    self.product_price = float(total)
+                    self.product_charge = int(0)
+                else:
+                    subtotal = self.product_price
+                    cargo = subtotal * opcion / 100
+                    total = cargo + subtotal
+                    print(f"- El Subtotal es de {subtotal}")
+                    print(f"- El Cargo es de {opcion}%")
+                    print(f"- El Total es de: ${total}")
+                    self.product_charge = float(opcion)
+                    self.product_price = float(total)
+        else:
+            print(colors.FAIL, "Algo ha fallado intentelo nuevamente", colors.RESET)
 
 
 # Clients Class
@@ -163,12 +201,13 @@ class Sucursal:
         subtotal: float,
         total: float,
     ):
-        self.id_order = int(cod)
+        self.id_sucursal = int(cod)
         self.sucursal_name = sucursal
         self.product_list = product_list
         self.order_date = Fecha()
         self.fecha_edit = Fecha()
         self.order_date_edit = False
+        self.charge = charge
         self.subtotal = float(subtotal)
         self.total = float(total)
         # --------------
@@ -661,12 +700,14 @@ def createProduct():
 def update_all_product():
     global gestor_de_productos
     gestor_de_productos.mostrar_simplificado()
-    product_code = intValidate("Ingrese el codigo del Producto que desea modificar: ")
+    product_code = intValidate(
+        "Ingrese el codigo del Producto que desea modificar: ")
     producto_encontrado = gestor_de_productos.buscar_por_codigo(product_code)
     if producto_encontrado:
         print("Nombre del Producto Actual", producto_encontrado.product_name)
         nuevo_nombre = validateProductName("Ingrese el nuevo nombre: ")
-        print("Precio de Costo del Producto", producto_encontrado.product_cost_price)
+        print("Precio de Costo del Producto",
+              producto_encontrado.product_cost_price)
         nuevo_cost_price = floatValidate("Ingrese el nuevo precio de costo: ")
         print("Precio Final del Producto", producto_encontrado.product_price)
         nuevo_precio = floatValidate("Ingrese el nuevo precio: ")
@@ -698,7 +739,8 @@ def update_all_product():
         decidir_cambios = input("Desea guardar los cambios ? - (Si/no)")
         if decidir_cambios.lower() in ("no", "n"):
             producto_encontrado.product_name = nombre_sin_cambio
-            producto_encontrado.product_cost_price = float(cost_price_sin_cambio)
+            producto_encontrado.product_cost_price = float(
+                cost_price_sin_cambio)
             producto_encontrado.product_price = float(precio_sin_cambio)
             producto_encontrado.stock = int(stock_sin_cambio)
             print("El Producto no se ha actualizado")
@@ -796,7 +838,8 @@ def update_product_cost_price():
 def update_product_price():
     global gestor_de_productos
     gestor_de_productos.mostrar_simplificado()
-    product_code = intValidate("Ingrese el codigo del Producto que desea modificar: ")
+    product_code = intValidate(
+        "Ingrese el codigo del Producto que desea modificar: ")
     producto_encontrado = gestor_de_productos.buscar_por_codigo(product_code)
     if producto_encontrado:
         print(
@@ -936,10 +979,12 @@ def createClient():
 def updateClient():
     global gestor_de_clientes
     gestor_de_clientes.mostrar_simplificado()
-    client_code = intValidate("Ingrese el DNI del Cliente que desea modificar: ")
+    client_code = intValidate(
+        "Ingrese el DNI del Cliente que desea modificar: ")
     client_encontrado = gestor_de_clientes.buscar_por_codigo(client_code)
     if client_encontrado:
-        nuevo_nombre = input("Ingrese el nuevo nombre - (Enter para dejar el actual): ")
+        nuevo_nombre = input(
+            "Ingrese el nuevo nombre - (Enter para dejar el actual): ")
         dni_confirm = input(
             "Desea cambiar el DNI y Fecha de Nacimiento del Cliente ? S/n "
         )
@@ -1067,7 +1112,8 @@ def createOrder():
             prod_code = intValidate(
                 "Ingrese el Codigo del Producto que desee agregar: "
             )
-            producto_encontrado = gestor_de_productos.buscar_por_codigo(prod_code)
+            producto_encontrado = gestor_de_productos.buscar_por_codigo(
+                prod_code)
             if producto_encontrado:
                 CARRITO_DE_PRODUCTOS.append(producto_encontrado)
                 if len(CARRITO_DE_PRODUCTOS) > 1:
@@ -1207,7 +1253,8 @@ def updateCarrito(carrito):
         if producto_encontrado != -1:
             print(producto_encontrado)
             gestor_de_productos.mostrar_simplificado()
-            buscar_nuevo_producto = intValidate("Ingrese el ID del Producto nuevo: ")
+            buscar_nuevo_producto = intValidate(
+                "Ingrese el ID del Producto nuevo: ")
             update_product = gestor_de_productos.buscar_por_codigo(
                 buscar_nuevo_producto
             )
@@ -1234,14 +1281,16 @@ def updateOrder():
     global gestor_de_pedidos
     global gestor_de_clientes
     gestor_de_pedidos.mostrar_simplificado()
-    buscar_pedido = intValidate("Ingrese el ID del Pedido que desea modificar: ")
+    buscar_pedido = intValidate(
+        "Ingrese el ID del Pedido que desea modificar: ")
     pedido_encontrado = gestor_de_pedidos.buscar_por_codigo(buscar_pedido)
     if pedido_encontrado:
         gestor_de_clientes.mostrar_simplificado()
         buscar_cliente = intValidate(
             "Ingrese el DNI del si lo quiere reemplazar cliente para remplazar, sino indique el anterior: "
         )
-        cliente_encontrado = gestor_de_clientes.buscar_por_codigo(buscar_cliente)
+        cliente_encontrado = gestor_de_clientes.buscar_por_codigo(
+            buscar_cliente)
         if cliente_encontrado:
             pedido_encontrado.customer = cliente_encontrado.surname_name
 
@@ -1337,12 +1386,18 @@ def create_sucursal():
         cod = gestor_de_sucursal.create_sucursal_cod()
         name = validateProductName()
         new_sucursal = Sucursal(cod, name, [], 0, 0, 0)
-        gestor_de_sucursal.sucursales.append(new_sucursal)
-        escribir_en_binario_sucursales()
-        print(colors.OK, "Se ha creado una nueva Sucursal", colors.RESET)
-        print(new_sucursal)
+        user = input(
+            f"{colors.WARNING}Desea ingresar Productos a esta Sucursal ?: s/n {colors.RESET}"
+        )
+        if user.lower() in ("s", "si", "yes", "y"):
+            add_sucursal_product(new_sucursal)
+        elif user.lower() in ("n", "no"):
+            gestor_de_sucursal.sucursales.append(new_sucursal)
+            escribir_en_binario_sucursales()
+            print(colors.OK, "Se ha creado una nueva Sucursal", colors.RESET)
+            print(new_sucursal)
         user = input(f"{colors.WARNING}hay un total de ({
-                     len(gestor_de_sucursal.sucursales)}) Sucursales desea ingresar mas ?: s/n {colors.RESET}")
+                     len(gestor_de_sucursal.sucursales)}) Sucursales, desea ingresar mas Sucursales ?: s/n {colors.RESET}")
         if user.lower() == "n":
             break
 
@@ -1351,121 +1406,124 @@ create_sucursal()
 gestor_de_sucursal.mostrar_todos()
 
 
-def add_sucursal_product():
+def add_sucursal_product(sucursal):
+    global gestor_de_productos
+    global gestor_de_sucursal
+
+    if sucursal:
+        if gestor_de_productos.validarListaVacia():
+            carrito_add_product(sucursal)
+        else:
+            if len(gestor_de_productos.productos) == 0:
+                text = "No hay productos para seleccionar, debe cargar los Productos e intentelo nuevamente"
+                graphi(text)
+    elif sucursal == "":
+        # Busqueda de sucursal para luego agregar productos
+        pass
+
+
+def carrito_add_product(sucursal):
     CARRITO_DE_PRODUCTOS = []
-    if gestor_de_productos.validarListaVacia():
-        while True:
+    while True:
+        if len(CARRITO_DE_PRODUCTOS) > 1:
+            print("\n\n\t----------------------------------------------------------")
+            print(
+                f"\tHay ({len(CARRITO_DE_PRODUCTOS)}) Productos en el Carrito para {
+                    sucursal.sucursal_name}\n\tEl Subtotal sin Cargos es de ${subtotalCarrito(CARRITO_DE_PRODUCTOS)}"
+            )
+            print("\t----------------------------------------------------------")
+        print("\n\t--------- Productos Disponibles -------------")
+        gestor_de_productos.mostrar_simplificado()
+        prod_code = intValidate(
+            "Ingrese el Codigo del Producto que desee agregar: ")
+        producto_encontrado = gestor_de_productos.buscar_por_codigo(prod_code)
+        if producto_encontrado:
+            CARRITO_DE_PRODUCTOS.append(producto_encontrado)
+            sucursal.product_list_descuento.append(0)
+            sucursal.product_list_precio_final.append(
+                producto_encontrado.product_price)
             if len(CARRITO_DE_PRODUCTOS) > 1:
                 print(
-                    "\n\n\t----------------------------------------------------------"
+                    f"{colors.WARNING}Carrito Actual para {
+                        sucursal.sucursal_name}{colors.RESET}: "
                 )
+                mostrarCarrito(CARRITO_DE_PRODUCTOS)
                 print(
-                    f"\tHay ({len(CARRITO_DE_PRODUCTOS)}) Productos en el Carrito para {
-                        client_encontrado}\n\tEl Subtotal sin Cargos es de ${subtotalCarrito(CARRITO_DE_PRODUCTOS)}"
+                    f"{colors.OK}El Subtotal del Carrito es de ${
+                        subtotalCarrito(CARRITO_DE_PRODUCTOS)}\n{colors.RESET}"
                 )
-                print("\t----------------------------------------------------------")
-            print("\n\t--------- Productos Disponibles -------------")
-            gestor_de_productos.mostrar_simplificado()
-            prod_code = intValidate(
-                "Ingrese el Codigo del Producto que desee agregar: "
+            user = input(
+                f"Desea ingresar mas Productos al Carrito para {
+                    sucursal.sucursal_name} ?: s/n "
             )
-            producto_encontrado = gestor_de_productos.buscar_por_codigo(prod_code)
-            if producto_encontrado:
-                CARRITO_DE_PRODUCTOS.append(producto_encontrado)
-                if len(CARRITO_DE_PRODUCTOS) > 1:
-                    print(
-                        f"{colors.WARNING}Carrito Actual para {
-                            client_encontrado}{colors.RESET}: "
-                    )
-                    mostrarCarrito(CARRITO_DE_PRODUCTOS)
-                    print(
-                        f"{colors.OK}El Subtotal del Carrito es de ${
-                            subtotalCarrito(CARRITO_DE_PRODUCTOS)}\n{colors.RESET}"
-                    )
-                user = input(
-                    f"Desea ingresar mas Productos al Carrito para {
-                        client_encontrado} ?: s/n "
-                )
-                if user.lower() in ("n", "no"):
-                    subtotal = subtotalCarrito(CARRITO_DE_PRODUCTOS)
-                    print(
-                        f"\n\t --- El Subtotal del Carrito es de ${
-                            subtotal} --- "
-                    )
-                    print(
-                        "- Si desea hacer un Descuento Ingrese el porcentaje con numero negativo"
-                    )
-                    print("(Ejemplo: -5, -15, -20)")
-                    print(
-                        "- Si desea un cargo extra Ingrese el porcentaje con numero positivo"
-                    )
-                    print(
-                        "- Si no desea agregar Descuento ni Cargos Extras ingrese '0 (cero)'"
-                    )
-                    while True:
-                        opcion = floatValidate_neg()
-                        if opcion >= 1000 or opcion <= -100:
-                            print(
-                                "No puede haber un descuento mayor al 100%, tampoco un recargo mayor 1000%"
-                            )
-                        elif opcion == 0:
-                            cargo = 0
-                            total = cargo + subtotal
-                            print(f"\n\t- El Subtotal es de ${subtotal}")
-                            print(f"\t- El Cargo es de {opcion}%")
-                            print(f"\t- El Total es de: ${total}")
-                            new_pedido = Order(
-                                cod,
-                                client_encontrado,
-                                CARRITO_DE_PRODUCTOS,
-                                opcion,
-                                subtotal,
-                                total,
-                            )
-                            gestor_de_pedidos.pedidos.append(new_pedido)
-                            escribir_en_binario_pedidos()
-                            CARRITO_DE_PRODUCTOS = []
-                            return createOrder()
-                        else:
-                            cargo = subtotal * opcion / 100
-                            total = cargo + subtotal
-                            print(f"- El Subtotal es de {subtotal}")
-                            print(f"- El Cargo es de {opcion}%")
-                            print(f"- El Total es de: ${total}")
-                            new_pedido = Order(
-                                cod,
-                                client_encontrado,
-                                CARRITO_DE_PRODUCTOS,
-                                float(opcion),
-                                float(subtotal),
-                                float(total),
-                            )
-                            print(new_pedido)
-                            gestor_de_pedidos.pedidos.append(new_pedido)
-                            escribir_en_binario_pedidos()
-                            CARRITO_DE_PRODUCTOS = []
-                            return createOrder()
-            else:
+            if user.lower() in ("n", "no"):
+                subtotal = subtotalCarrito(CARRITO_DE_PRODUCTOS)
                 print(
-                    colors.FAIL
-                    + "El Codigo del Producto no fue encontrado"
-                    + colors.RESET
+                    f"\n\t --- El Subtotal del Carrito es de ${
+                        subtotal} --- "
                 )
-    else:
-        if len(gestor_de_productos.productos) == 0:
-            text = "No hay productos para seleccionar, debe cargar los Productos e intentelo nuevamente"
-            graphi(text)
-        if len(gestor_de_clientes.clientes) == 0:
-            text = "No hay Clientes para seleccionar, debe cargar los Clientes e intentelo nuevamente"
-            graphi(text)
+                print(
+                    "- Si desea hacer un Descuento Ingrese el porcentaje con numero negativo"
+                )
+                print("(Ejemplo: -5, -15, -20)")
+                print(
+                    "- Si desea un cargo extra Ingrese el porcentaje con numero positivo"
+                )
+                print(
+                    "- Si no desea agregar Descuento ni Cargos Extras ingrese '0 (cero)'"
+                )
+                while True:
+                    opcion = floatValidate_neg()
+                    if opcion >= 1000 or opcion <= -100:
+                        print(
+                            "No puede haber un descuento mayor al 100%, tampoco un recargo mayor 1000%"
+                        )
+                    elif opcion == 0:
+                        cargo = 0
+                        total = cargo + subtotal
+                        print(f"\n\t- El Subtotal es de ${subtotal}")
+                        print(f"\t- El Cargo es de {opcion}%")
+                        print(f"\t- El Total es de: ${total}")
+                        print(sucursal)
+                        cod = sucursal.id_sucursal
+                        name = sucursal.sucursal_name
+                        new_sucursal = Sucursal(
+                            cod, name, CARRITO_DE_PRODUCTOS, opcion, subtotal, total
+                        )
+                        CARRITO_DE_PRODUCTOS = []
+                        return new_sucursal
+                    else:
+                        cargo = subtotal * opcion / 100
+                        total = cargo + subtotal
+                        print(f"- El Subtotal es de {subtotal}")
+                        print(f"- El Cargo es de {opcion}%")
+                        print(f"- El Total es de: ${total}")
+
+                        new_pedido = Order(
+                            cod,
+                            client_encontrado,
+                            CARRITO_DE_PRODUCTOS,
+                            float(opcion),
+                            float(subtotal),
+                            float(total),
+                        )
+                        print(new_pedido)
+                        gestor_de_pedidos.pedidos.append(new_pedido)
+                        escribir_en_binario_pedidos()
+                        CARRITO_DE_PRODUCTOS = []
+                        return createOrder()
+        else:
+            print(
+                colors.FAIL + "El Codigo del Producto no fue encontrado" + colors.RESET
+            )
 
 
 # ordenar por TOTAL
 
 
 def mezclar_por_total(lista, inicio, medio, fin):
-    izquierda = lista[inicio : medio + 1]
-    derecha = lista[medio + 1 : fin + 1]
+    izquierda = lista[inicio: medio + 1]
+    derecha = lista[medio + 1: fin + 1]
 
     i = j = 0
     k = inicio
@@ -1699,7 +1757,8 @@ def mainMenu():
 
     while True:
         # grafico ASCII
-        pyfiglet.print_figlet(text="La Despensita\nby Franco Monzon", colors="RED")
+        pyfiglet.print_figlet(
+            text="La Despensita\nby Franco Monzon", colors="RED")
         # Imprimir Menu
         print(menu)
         opcion = intValidate(
