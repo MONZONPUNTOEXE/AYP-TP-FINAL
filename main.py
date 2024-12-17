@@ -102,8 +102,7 @@ def createProduct():
         cod = gestor_de_productos.obtener_nuevo_codigo()
         name = negocio.validateProductName()
         cost_price = negocio.floatValidate("Ingrese el costo del Producto : ")
-        price = negocio.floatValidate(
-            "Ingrese el precio de venta del Producto : ")
+        price = negocio.floatValidate("Ingrese el precio de venta del Producto : ")
         stock = negocio.intValidate("Ingrese el Stock del Producto: ")
         new_product = clases.Producto(cod, name, cost_price, price, stock)
         gestor_de_productos.productos.append(new_product)
@@ -127,10 +126,8 @@ def update_all_product():
     if producto_encontrado:
         print("Nombre del Producto Actual", producto_encontrado.product_name)
         nuevo_nombre = negocio.validateProductName("Ingrese el nuevo nombre: ")
-        print("Precio de Costo del Producto",
-              producto_encontrado.product_cost_price)
-        nuevo_cost_price = negocio.floatValidate(
-            "Ingrese el nuevo precio de costo: ")
+        print("Precio de Costo del Producto", producto_encontrado.product_cost_price)
+        nuevo_cost_price = negocio.floatValidate("Ingrese el nuevo precio de costo: ")
         print("Precio Final del Producto", producto_encontrado.product_price)
         nuevo_precio = negocio.floatValidate("Ingrese el nuevo precio: ")
         print("Stock actual del Producto", producto_encontrado.stock)
@@ -161,8 +158,7 @@ def update_all_product():
         decidir_cambios = input("Desea guardar los cambios ? - (Si/no)")
         if decidir_cambios.lower() in ("no", "n"):
             producto_encontrado.product_name = nombre_sin_cambio
-            producto_encontrado.product_cost_price = float(
-                cost_price_sin_cambio)
+            producto_encontrado.product_cost_price = float(cost_price_sin_cambio)
             producto_encontrado.product_price = float(precio_sin_cambio)
             producto_encontrado.stock = int(stock_sin_cambio)
             print("El Producto no se ha actualizado")
@@ -228,8 +224,7 @@ def update_product_cost_price():
             f"Costo Actual: {colors.OK}${
                 producto_encontrado.product_cost_price}{colors.RESET}"
         )
-        nuevo_precio = negocio.floatValidate(
-            "Ingrese el nuevo Costo del Producto: ")
+        nuevo_precio = negocio.floatValidate("Ingrese el nuevo Costo del Producto: ")
         # cambios anteriores
         precio_sin_cambio = producto_encontrado.product_cost_price
 
@@ -342,8 +337,7 @@ def update_product_stock():
 def removeProduct():
     global gestor_de_productos
     gestor_de_productos.mostrar_simplificado()
-    code = negocio.intValidate(
-        "Ingrese el codigo del Producto que desea Eliminar: ")
+    code = negocio.intValidate("Ingrese el codigo del Producto que desea Eliminar: ")
     producto_encontrado = gestor_de_productos.buscar_por_codigo(code)
     if producto_encontrado:
         opcion = input(f"\n\tDesea eliminar ?\n\n{producto_encontrado}\nS/n: ")
@@ -416,8 +410,7 @@ def updateClient():
     )
     client_encontrado = gestor_de_clientes.buscar_por_codigo(client_code)
     if client_encontrado:
-        nuevo_nombre = input(
-            "Ingrese el nuevo nombre - (Enter para dejar el actual): ")
+        nuevo_nombre = input("Ingrese el nuevo nombre - (Enter para dejar el actual): ")
         dni_confirm = input(
             "Desea cambiar el DNI y Fecha de Nacimiento del Cliente ? S/n "
         )
@@ -466,8 +459,7 @@ def updateClient():
 def deleteClient():
     global gestor_de_clientes
     gestor_de_clientes.mostrar_simplificado()
-    code = negocio.intValidate(
-        "Ingrese el DNI del Cliente que desea Eliminar: ")
+    code = negocio.intValidate("Ingrese el DNI del Cliente que desea Eliminar: ")
     client_encontrado = gestor_de_clientes.buscar_por_codigo(code)
     if client_encontrado:
         opcion = input(f"\n\tDesea eliminar ?\n\n{client_encontrado}\nS/n: ")
@@ -566,8 +558,7 @@ def createOrder():
             prod_code = negocio.intValidate(
                 "Ingrese el Codigo del Producto que desee agregar: "
             )
-            producto_encontrado = gestor_de_productos.buscar_por_codigo(
-                prod_code)
+            producto_encontrado = gestor_de_productos.buscar_por_codigo(prod_code)
             if producto_encontrado:
                 CARRITO_DE_PRODUCTOS.append(producto_encontrado)
                 if len(CARRITO_DE_PRODUCTOS) > 1:
@@ -745,8 +736,7 @@ def updateOrder():
         buscar_cliente = negocio.intValidate(
             "Ingrese el DNI del si lo quiere reemplazar cliente para remplazar, sino indique el anterior: "
         )
-        cliente_encontrado = gestor_de_clientes.buscar_por_codigo(
-            buscar_cliente)
+        cliente_encontrado = gestor_de_clientes.buscar_por_codigo(buscar_cliente)
         if cliente_encontrado:
             pedido_encontrado.customer = cliente_encontrado.surname_name
 
@@ -1021,8 +1011,8 @@ def agregar_descuento(sucursal, CARRITO_DE_PRODUCTOS: list):
 
 
 def mezclar_por_total(lista, inicio, medio, fin):
-    izquierda = lista[inicio: medio + 1]
-    derecha = lista[medio + 1: fin + 1]
+    izquierda = lista[inicio : medio + 1]
+    derecha = lista[medio + 1 : fin + 1]
 
     i = j = 0
     k = inicio
@@ -1066,135 +1056,6 @@ def ordenar_por_merge_sort_por_total():
     print(lista_de_pedidos)
 
 
-def menuProductos():
-    pyfiglet.print_figlet(text="\tMenu\nProductos", colors="GREEN")
-    global menu_text
-    global gestor_de_productos
-    while True:
-        print(menu_text.product_menu_text)
-        opcion = input("Escriba la opcion que desea seleccionar: ")
-        opcion = opcion.lower()
-        if opcion == "crear producto":
-            createProduct()
-        elif opcion == "modificar producto":
-            if gestor_de_productos.validarListaVacia():
-                update_product_menu()
-            else:
-                print("\n\tLa lista esta vacia no se puede modificar productos")
-        elif opcion == "mostrar todo":
-            if gestor_de_productos.validarListaVacia():
-                gestor_de_productos.mostrar_todos()
-            else:
-                print("\n\tLa lista esta vacia no se pueden mostrar productos")
-        elif opcion == "eliminar producto":
-            if gestor_de_productos.validarListaVacia():
-                removeProduct()
-            else:
-                print("\n\tLa lista esta vacia no se puede eliminar productos")
-        elif opcion == "salir":
-            break
-
-
-def update_product_menu():
-    pyfiglet.print_figlet(text="\tMenu\nModificar Productos", colors="GREEN")
-    global menu_text
-    global gestor_de_productos
-    while True:
-        print(menu_text.update_product_menu_text)
-        opcion = input("Escriba la opcion que desea seleccionar: ")
-        opcion = opcion.lower()
-        if opcion == "cambiar nombre":
-            update_product_name()
-        elif opcion == "cambiar costo":
-            update_product_cost_price()
-        elif opcion == "cambiar precio":
-            update_product_price()
-        elif opcion == "cambiar stock":
-            update_product_stock()
-        elif opcion == "cambiar todo":
-            update_all_product()
-        elif opcion == "atras":
-            break
-        else:
-            print(colors.FAIL, "Opcion incorrecta, intentelo nuecamente", colors.RESET)
-
-
-# menu gestor de cliente
-def menuCliente():
-    pyfiglet.print_figlet(text="\tMenu\nClientes", colors="GREEN")
-    global menu_text
-    global gestor_de_clientes
-    while True:
-        print(menu_text.client_menu_text)
-        opcion = input("Escriba la opcion que desea seleccionar: ")
-        opcion = opcion.lower()
-        if opcion == "crear cliente":
-            createClient()
-        elif opcion == "modificar cliente":
-            if gestor_de_clientes.validarListaVacia():
-                updateClient()
-            else:
-                print("\n\tLa lista esta vacia no se puede modificar clientes")
-        elif opcion == "mostrar todo":
-            if gestor_de_clientes.validarListaVacia():
-                gestor_de_clientes.mostrar_todos()
-            else:
-                print("\n\tLa lista esta vacia no se pueden mostrar clientes")
-        elif opcion == "eliminar cliente":
-            if gestor_de_clientes.validarListaVacia():
-                deleteClient()
-            else:
-                print("\n\tLa lista esta vacia no se puede eliminar clientes")
-        elif opcion == "salir":
-            break
-
-
-# menu de gestor de Orden
-def menuPedidos():
-    pyfiglet.print_figlet(text="\tMenu\nPedidos", colors="YELLOW")
-    global menu_text
-    global gestor_de_pedidos
-    while True:
-        print(menu_text.pedidos_menu_text)
-        opcion = input("Escriba la opcion que desea seleccionar: ")
-        opcion = opcion.lower()
-        if opcion == "crear pedido":
-            createOrder()
-        elif opcion == "modificar pedido":
-            if gestor_de_pedidos.validarListaVacia():
-                updateOrder()
-            else:
-                print("\n\tLa lista esta vacia no se puede modificar pedidos")
-        elif opcion == "mostrar todo":
-            if gestor_de_pedidos.validarListaVacia():
-                gestor_de_pedidos.mostrar_todos()
-                print(
-                    colors.OK,
-                    "Para mas detalles sobre el pedido, elija la opcion 'Mostrar simplificado'",
-                    colors.RESET,
-                )
-            else:
-                print("\n\tLa lista esta vacia no se pueden mostrar pedidos")
-        elif opcion == "mostrar simplificado":
-            if gestor_de_pedidos.validarListaVacia():
-                readOrder()
-            else:
-                print("\n\tLa lista esta vacia no se pueden mostrar pedidos")
-        elif opcion == "total margesort":
-            if gestor_de_pedidos.validarListaVacia():
-                ordenar_por_merge_sort_por_total()
-                permanenciaDeArchivos()
-            else:
-                print("\n\tLa lista esta vacia no se pueden mostrar pedidos")
-        elif opcion == "eliminar pedido":
-            if gestor_de_pedidos.validarListaVacia():
-                deleteOrder()
-            else:
-                print("\n\tLa lista esta vacia no se puede eliminar pedidos")
-        elif opcion == "salir":
-            break
-
-
 def mainMenu():
     menu = """
     1 - Gestión de Productos
@@ -1205,15 +1066,14 @@ def mainMenu():
 
     while True:
         # grafico ASCII
-        pyfiglet.print_figlet(
-            text="La Despensita\nby Franco Monzon", colors="RED")
+        pyfiglet.print_figlet(text="La Despensita\nby Franco Monzon", colors="RED")
         # Imprimir Menu
         print(menu)
         opcion = negocio.intValidate(
             "A continuacion ingrese el numero de la opcion que desea realizar: "
         )
         if opcion == 1:
-            menuProductos()
+            menu_text.menuProductos()
         if opcion == 2:
             menuCliente()
         if opcion == 3:
