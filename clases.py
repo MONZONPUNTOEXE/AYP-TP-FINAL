@@ -2,7 +2,7 @@ import re
 import time
 from datetime import datetime
 
-import negocio
+from negocio import floatValidate_neg
 
 
 class colors:
@@ -68,7 +68,7 @@ class Producto:
             print("- Si desea un cargo extra Ingrese el porcentaje con numero positivo")
             print("- Si no desea agregar Descuento ni Cargos Extras ingrese '0 (cero)'")
             while True:
-                opcion = negocio.floatValidate_neg()
+                opcion = floatValidate_neg()
                 if opcion >= 1000 or opcion <= -100:
                     print(
                         "No puede haber un descuento mayor al 100%, tampoco un recargo mayor 1000%"
@@ -188,6 +188,73 @@ class Order:
     def resumenOrden(self):
         return f"ID: {
             self.id_order} - Fecha: {self.order_date} - Cliente: {self.customer}"
+
+
+class Inventory:
+    def __init__(
+        self,
+        cod: int,
+        stock: int,
+    ):
+        self.id_sucursal = int(cod)
+        self.sucursal_name = sucursal
+        self.product_list = product_list
+        self.order_date = Fecha()
+        self.fecha_edit = Fecha()
+        self.sucursal_date_edit = False
+        self.charge = charge
+        self.subtotal = float(subtotal)
+        self.total = float(total)
+        # --------------
+        self.len_product_list = len(product_list)
+
+    def __repr__(self) -> str:
+        if self.sucursal_date_edit:
+            return (
+                f"══════════════════════════════════════════\n"
+                f"          Sucursal: {self.sucursal_name}\n"
+                f"══════════════════════════════════════════\n"
+                f" ID :                  {self.id_sucursal}\n"
+                f" Ingreso de Sucursal:  {self.order_date}\n"
+                f" Ultima Modificacion:  {self.fecha_edit}\n"
+                f" Subtotal:             {self.subtotal}\n"
+                f" Total:                {self.total}\n"
+                f" Productos en Sucursal: ({self.len_product_list})\n"
+                f"══════════════════════════════════════════\n"
+            )
+        else:
+            return (
+                f"══════════════════════════════════════════\n"
+                f"          Sucursal: {self.sucursal_name}\n"
+                f"══════════════════════════════════════════\n"
+                f" ID :                  {self.id_sucursal}\n"
+                f" Ingreso de Sucursal:  {self.order_date}\n"
+                f" Total:                {self.total}\n"
+                f" Productos en Carrito: ({self.len_product_list})\n"
+                f"══════════════════════════════════════════\n"
+            )
+
+    def view_product_list(self):
+        if self.sucursal_date_edit:
+            print("Productos de la Sucursal")
+            print(
+                f"ID: {
+                    self.id_sucursal} - Nombre: {self.sucursal_name} - Fecha: {self.order_date} - Ult. Modificacion: {self.fecha_edit}\nSubtotal: ${self.subtotal} - TOTAL: ${self.total}\n\t -----------------"
+            )
+            for producto in self.product_list:
+                print(f"\t- {producto.product_name} ${producto.product_price}")
+        else:
+            print("Productos de la Sucursal")
+            print(
+                f"ID: {
+                    self.id_sucursal} - Nombre: {self.sucursal_name} - Fecha: {self.order_date}\nSubtotal: ${self.subtotal} - TOTAL: ${self.total}\n\t -----------------"
+            )
+            for producto in self.product_list:
+                print(f"\t- {producto.product_name} ${producto.product_price}")
+
+    def resumen_sucursal(self):
+        return f"ID: {
+            self.id_sucursal} - Fecha: {self.order_date}"
 
 
 class Sucursal:
@@ -492,3 +559,10 @@ class Fecha:
 
     def __str__(self):
         return f"{self.dia}/{self.mes}/{self.anio} {self.hora}"
+
+
+# Creacion de los objetos "Gestores de Entidades" -----------------------------
+gestor_de_productos = gestorProductos()
+gestor_de_clientes = gestorClientes()
+gestor_de_pedidos = orderGestor()
+gestor_de_sucursal = gestorSucursal()
