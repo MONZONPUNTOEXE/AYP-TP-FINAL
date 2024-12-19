@@ -1,9 +1,20 @@
 # external library
 import pyfiglet
+from src.clases.gestor_pedidos import GestorPedidos
 import utils
-from utils import negocio as negocio
-from clases import colors
-from utils import clases
+
+from src.negocio import (
+    gestor_productos,
+    gestor_clientes,
+    gestor_pedidos,
+    gestor_sucursales,
+)
+
+# Creacion de los objetos "Gestores de Entidades" -----------------------------
+gestor_de_productos = gestor_productos.gestorProductos()
+gestor_de_clientes = gestor_clientes.GestorClientes()
+gestor_de_pedidos = gestor_pedidos.GestorPedidos()
+gestor_de_sucursal = gestor_sucursales.GestorSucursales()
 
 
 def menuProductos():
@@ -139,17 +150,59 @@ def menuPedidos():
             break
 
 
+# menu Sucursal
+def menuSucursal():
+    pyfiglet.print_figlet(text="\tMenu\nSucursal", colors="YELLOW")
+    global menu_text
+    global gestor_de_sucursal
+    while True:
+        print(utils.sucursal_menu_text)
+        opcion = input("Escriba la opcion que desea seleccionar: ")
+        opcion = opcion.lower()
+        if opcion == "crear sucursal":
+            negocio.create_sucursal()
+        elif opcion == "modificar sucursal":
+            if clases.gestor_de_sucursal.validarListaVacia():
+                print("la opcion no esta lista aun")
+            else:
+                print("\n\tLa lista esta vacia no se puede modificar sucursales")
+        elif opcion == "mostrar todo":
+            if clases.gestor_de_sucursal.validarListaVacia():
+                clases.gestor_de_sucursal.mostrar_todos()
+                print(
+                    colors.OK,
+                    "Para mas detalles sobre la sucursal, elija la opcion 'Mostrar simplificado'",
+                    colors.RESET,
+                )
+            else:
+                print("\n\tLa lista esta vacia no se pueden mostrar sucursales")
+        elif opcion == "mostrar simplificado":
+            if clases.gestor_de_sucursal.validarListaVacia():
+                print("la opcion no esta lista aun")
+            else:
+                print("\n\tLa lista esta vacia no se pueden mostrar sucursales")
+        elif opcion == "eliminar sucursal":
+            if clases.gestor_de_sucursal.validarListaVacia():
+                print("la opcion no esta lista aun")
+            else:
+                print("\n\tLa lista esta vacia no se puede eliminar sucursales")
+        elif opcion == "salir":
+            break
+
+
 def mainMenu():
     menu = """
     1 - Gestión de Productos
     2 - Gestión de Clientes
     3 - Gestión de Pedidos
-    4 - Salir
+    4 - Gestión de Sucursales
+    5 - Salir
     """
 
     while True:
         # grafico ASCII
-        pyfiglet.print_figlet(text="La Despensita\nby Franco Monzon", colors="RED")
+        pyfiglet.print_figlet(
+            text="La Despensita\nby Franco Monzon", colors="RED")
         # Imprimir Menu
         print(menu)
         opcion = negocio.intValidate(
@@ -162,6 +215,8 @@ def mainMenu():
         if opcion == 3:
             menuPedidos()
         if opcion == 4:
+            menuSucursal()
+        if opcion == 5:
             pyfiglet.print_figlet(
                 text="Gracias !!! \nVuelva Pronto", font="slant", colors="BLUE"
             )
