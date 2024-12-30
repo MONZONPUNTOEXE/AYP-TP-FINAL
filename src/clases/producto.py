@@ -1,3 +1,8 @@
+from utils.fecha import Fecha
+from utils.validaciones import floatValidate_neg
+from utils.colors_text import red_text
+
+
 class Producto:
     def __init__(self, cod, name: str, cost_price: float, price: float, stock: int):
         self.ref_code = int(cod)
@@ -78,4 +83,4 @@ class Producto:
                     self.product_charge = float(opcion)
                     self.product_price = float(total)
         else:
-            print(colors.FAIL, "Algo ha fallado intentelo nuevamente", colors.RESET)
+            print(red_text("Algo ha fallado intentelo nuevamente"))

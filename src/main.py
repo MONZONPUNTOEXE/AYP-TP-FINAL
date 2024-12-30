@@ -1,14 +1,18 @@
 # external library
+import utils.menu as utils
 import pyfiglet
-from src.clases.gestor_pedidos import GestorPedidos
-import utils
+import os
 
-from src.negocio import (
+
+# internal modules
+from negocio import (
     gestor_productos,
     gestor_clientes,
     gestor_pedidos,
     gestor_sucursales,
 )
+
+print(os.listdir())
 
 # Creacion de los objetos "Gestores de Entidades" -----------------------------
 gestor_de_productos = gestor_productos.gestorProductos()
@@ -26,7 +30,7 @@ def menuProductos():
         opcion = input("Escriba la opcion que desea seleccionar: ")
         opcion = opcion.lower()
         if opcion == "crear producto":
-            negocio.createProduct()
+            createProduct()
         elif opcion == "modificar producto":
             if clases.gestor_de_productos.validarListaVacia():
                 update_product_menu()
@@ -201,8 +205,7 @@ def mainMenu():
 
     while True:
         # grafico ASCII
-        pyfiglet.print_figlet(
-            text="La Despensita\nby Franco Monzon", colors="RED")
+        pyfiglet.print_figlet(text="La Despensita\nby Franco Monzon", colors="RED")
         # Imprimir Menu
         print(menu)
         opcion = negocio.intValidate(

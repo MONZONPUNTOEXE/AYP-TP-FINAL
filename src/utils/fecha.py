@@ -2,6 +2,8 @@ import re
 import time
 from datetime import datetime
 
+from colors_text import red_text
+
 
 class Fecha:
     def __init__(self, fecha_str: str = None):
@@ -16,9 +18,7 @@ class Fecha:
             # validar formato de fecha dd/mm/aaaa con expresiones regulres
             if not self.es_fecha_valida(fecha_str):
                 raise ValueError(
-                    colors.FAIL
-                    + "Formato de fecha no válido. Debe ser dd/mm/aaaa"
-                    + colors.RESET
+                    red_text("Formato de fecha no válido. Debe ser dd/mm/aaaa")
                 )
             partes = str(fecha_str).split("/")
             self.dia = int(partes[0])

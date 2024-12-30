@@ -1,11 +1,5 @@
 import copy
-
 import pyfiglet
-
-import utils
-from utils import clases as clases
-from clases import colors
-
 
 # Subrrayado de texto
 
