@@ -1,3 +1,7 @@
+from clases.pedido import Order
+from utils.colors_text import yellow_text
+
+
 class GestorPedidos:
     def __init__(self) -> None:
         self.pedidos: list[Order] = []
@@ -6,7 +10,7 @@ class GestorPedidos:
         if len(self.pedidos) > 0:
             return str(self.pedidos)
         else:
-            return colors.WARNING + "No hay pedidos cargados actualmente" + colors.RESET
+            return yellow_text("No hay pedidos cargados actualmente")
 
     def validarListaVacia(self):
         if len(self.pedidos) > 0:
@@ -20,18 +24,14 @@ class GestorPedidos:
             for pedido in self.pedidos:
                 print(pedido)
         else:
-            print(
-                colors.WARNING
-                + "No hay pedidos cargados hasta el momento"
-                + colors.RESET
-            )
+            print(yellow_text("No hay pedidos cargados actualmente"))
 
     def mostrar_simplificado(self):
         if self.pedidos:
             for pedido in self.pedidos:
                 print(pedido.resumenOrden())
         else:
-            print(colors.WARNING + "La lista esta Vacia" + colors.RESET)
+            print(yellow_text("la Lista esta Vacia"))
 
     def buscar_por_codigo(self, codigo_a_buscar: int):
         for pedido in self.pedidos:
@@ -41,3 +41,6 @@ class GestorPedidos:
 
     def create_order_cod(self):
         return len(self.pedidos) + 1
+
+
+gestor_de_pedidos = GestorPedidos()

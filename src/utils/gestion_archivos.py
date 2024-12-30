@@ -1,48 +1,54 @@
 from pickle import dumps, load
 import os
 
+# imports objetcs
+from negocio.gestor_productos import gestor_de_productos
+from negocio.gestor_sucursales import gestor_de_sucursal
+from negocio.gestor_clientes import gestor_de_clientes
+from negocio.gestor_pedidos import gestor_de_pedidos
+
 
 def escribir_en_binario_productos():
     global gestor_de_productos
     with open("./bin/productos.bin", "wb") as bin_file:
-        bin_file.write(dumps(clases.gestor_de_productos.productos))
+        bin_file.write(dumps(gestor_de_productos.productos))
 
 
 def escribir_en_binario_clientes():
     global gestor_de_clientes
     with open("./bin/clientes.bin", "wb") as bin_file:
-        bin_file.write(dumps(clases.gestor_de_clientes.clientes))
+        bin_file.write(dumps(gestor_de_clientes.clientes))
 
 
 def escribir_en_binario_pedidos():
     global gestor_de_pedidos
     with open("./bin/pedidos.bin", "wb") as bin_file:
-        bin_file.write(dumps(clases.gestor_de_pedidos.pedidos))
+        bin_file.write(dumps(gestor_de_pedidos.pedidos))
 
 
 def escribir_en_binario_sucursales():
     global gestor_de_productos
     with open("./bin/sucursales.bin", "wb") as bin_file:
-        bin_file.write(dumps(clases.gestor_de_sucursal.sucursales))
+        bin_file.write(dumps(gestor_de_sucursal.sucursales))
 
 
 # Cargar binarios
 def cargar_desde_binario_productos():
     global gestor_de_productos
     with open("productos.bin", "rb") as bin_file:
-        clases.gestor_de_productos.productos = load(bin_file)
+        gestor_de_productos.productos = load(bin_file)
 
 
 def cargar_desde_binario_clientes():
     global gestor_de_clientes
     with open("clientes.bin", "rb") as bin_file:
-        clases.gestor_de_clientes.clientes = load(bin_file)
+        gestor_de_clientes.clientes = load(bin_file)
 
 
 def cargar_desde_binario_pedidos():
     global gestor_de_pedidos
     with open("pedidos.bin", "rb") as bin_file:
-        clases.gestor_de_pedidos.pedidos = load(bin_file)
+        gestor_de_pedidos.pedidos = load(bin_file)
 
 
 def permanenciaDeArchivos():

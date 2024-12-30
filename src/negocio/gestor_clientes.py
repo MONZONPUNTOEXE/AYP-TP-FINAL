@@ -1,3 +1,8 @@
+from clases.cliente import Cliente
+from utils.fecha import Fecha
+from utils.colors_text import red_text, green_text
+
+
 class GestorClientes:
     def __init__(self) -> None:
         self.clientes: list[Cliente] = []
@@ -6,9 +11,7 @@ class GestorClientes:
         if len(self.clientes) > 0:
             return str(self.clientes)
         else:
-            return (
-                colors.WARNING + "No hay clientes cargados actualmente" + colors.RESET
-            )
+            return red_text("No hay clientes cargados actualmente")
 
     def validarListaVacia(self):
         if len(self.clientes) > 0:
@@ -40,13 +43,9 @@ class GestorClientes:
         if self.clientes:
             print("Listando los Clientes disponibles")
             for cliente in self.clientes:
-                print(colors.OK, cliente, colors.RESET)
+                print(green_text(cliente))
         else:
-            print(
-                colors.WARNING
-                + "No hay Clientes cargados hasta el momento"
-                + colors.RESET
-            )
+            print(red_text("No hay Clientes cargados hasta el momento"))
 
     def mostrar_simplificado(self):
         if self.clientes:
@@ -60,3 +59,6 @@ class GestorClientes:
             if cliente.dni == codigo_a_buscar:
                 return cliente
         return None
+
+
+gestor_de_clientes = GestorClientes()

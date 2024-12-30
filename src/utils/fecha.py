@@ -2,7 +2,7 @@ import re
 import time
 from datetime import datetime
 
-from colors_text import red_text
+from utils.colors_text import red_text
 
 
 class Fecha:

@@ -5,20 +5,23 @@ import os
 
 
 # internal modules
-from negocio import (
-    gestor_productos,
-    gestor_clientes,
-    gestor_pedidos,
-    gestor_sucursales,
+from negocio.gestor_productos import gestor_de_productos
+from utils.gestion_archivos import permanenciaDeArchivos
+from utils.validaciones import intValidate
+from utils.colors_text import red_text
+from negocio.funciones_productos import (
+    createProduct,
+    update_all_product,
+    update_product_name,
+    update_product_price,
+    update_product_cost_price,
+    update_product_stock,
+    removeProduct,
 )
 
 print(os.listdir())
 
 # Creacion de los objetos "Gestores de Entidades" -----------------------------
-gestor_de_productos = gestor_productos.gestorProductos()
-gestor_de_clientes = gestor_clientes.GestorClientes()
-gestor_de_pedidos = gestor_pedidos.GestorPedidos()
-gestor_de_sucursal = gestor_sucursales.GestorSucursales()
 
 
 def menuProductos():
@@ -32,18 +35,18 @@ def menuProductos():
         if opcion == "crear producto":
             createProduct()
         elif opcion == "modificar producto":
-            if clases.gestor_de_productos.validarListaVacia():
+            if gestor_de_productos.validarListaVacia():
                 update_product_menu()
             else:
                 print("\n\tLa lista esta vacia no se puede modificar productos")
         elif opcion == "mostrar todo":
-            if clases.gestor_de_productos.validarListaVacia():
-                clases.gestor_de_productos.mostrar_todos()
+            if gestor_de_productos.validarListaVacia():
+                gestor_de_productos.mostrar_todos()
             else:
                 print("\n\tLa lista esta vacia no se pueden mostrar productos")
         elif opcion == "eliminar producto":
-            if clases.gestor_de_productos.validarListaVacia():
-                negocio.removeProduct()
+            if gestor_de_productos.validarListaVacia():
+                removeProduct()
             else:
                 print("\n\tLa lista esta vacia no se puede eliminar productos")
         elif opcion == "salir":
@@ -59,23 +62,19 @@ def update_product_menu():
         opcion = input("Escriba la opcion que desea seleccionar: ")
         opcion = opcion.lower()
         if opcion == "cambiar nombre":
-            negocio.update_product_name()
+            update_product_name()
         elif opcion == "cambiar costo":
-            negocio.update_product_cost_price()
+            update_product_cost_price()
         elif opcion == "cambiar precio":
-            negocio.update_product_price()
+            update_product_price()
         elif opcion == "cambiar stock":
-            negocio.update_product_stock()
+            update_product_stock()
         elif opcion == "cambiar todo":
-            negocio.update_all_product()
+            update_all_product()
         elif opcion == "atras":
             break
         else:
-            print(
-                colors.FAIL,
-                "Opcion incorrecta, intentelo nuecamente",
-                colors.RESET,
-            )
+            print(red_text("Opcion incorrecta, intentelo nuecamente"))
 
 
 # menu gestor de cliente
@@ -88,20 +87,20 @@ def menuCliente():
         opcion = input("Escriba la opcion que desea seleccionar: ")
         opcion = opcion.lower()
         if opcion == "crear cliente":
-            negocio.createClient()
+            createClient()
         elif opcion == "modificar cliente":
-            if clases.gestor_de_clientes.validarListaVacia():
-                negocio.updateClient()
+            if gestor_de_clientes.validarListaVacia():
+                updateClient()
             else:
                 print("\n\tLa lista esta vacia no se puede modificar clientes")
         elif opcion == "mostrar todo":
-            if clases.gestor_de_clientes.validarListaVacia():
-                clases.gestor_de_clientes.mostrar_todos()
+            if gestor_de_clientes.validarListaVacia():
+                gestor_de_clientes.mostrar_todos()
             else:
                 print("\n\tLa lista esta vacia no se pueden mostrar clientes")
         elif opcion == "eliminar cliente":
-            if clases.gestor_de_clientes.validarListaVacia():
-                negocio.deleteClient()
+            if gestor_de_clientes.validarListaVacia():
+                deleteClient()
             else:
                 print("\n\tLa lista esta vacia no se puede eliminar clientes")
         elif opcion == "salir":
@@ -118,15 +117,15 @@ def menuPedidos():
         opcion = input("Escriba la opcion que desea seleccionar: ")
         opcion = opcion.lower()
         if opcion == "crear pedido":
-            negocio.createOrder()
+            createOrder()
         elif opcion == "modificar pedido":
-            if clases.gestor_de_pedidos.validarListaVacia():
-                negocio.updateOrder()
+            if gestor_de_pedidos.validarListaVacia():
+                updateOrder()
             else:
                 print("\n\tLa lista esta vacia no se puede modificar pedidos")
         elif opcion == "mostrar todo":
-            if clases.gestor_de_pedidos.validarListaVacia():
-                clases.gestor_de_pedidos.mostrar_todos()
+            if gestor_de_pedidos.validarListaVacia():
+                gestor_de_pedidos.mostrar_todos()
                 print(
                     colors.OK,
                     "Para mas detalles sobre el pedido, elija la opcion 'Mostrar simplificado'",
@@ -135,19 +134,19 @@ def menuPedidos():
             else:
                 print("\n\tLa lista esta vacia no se pueden mostrar pedidos")
         elif opcion == "mostrar simplificado":
-            if clases.gestor_de_pedidos.validarListaVacia():
-                negocio.readOrder()
+            if gestor_de_pedidos.validarListaVacia():
+                readOrder()
             else:
                 print("\n\tLa lista esta vacia no se pueden mostrar pedidos")
         elif opcion == "total margesort":
-            if clases.gestor_de_pedidos.validarListaVacia():
-                negocio.ordenar_por_merge_sort_por_total()
-                negocio.permanenciaDeArchivos()
+            if gestor_de_pedidos.validarListaVacia():
+                ordenar_por_merge_sort_por_total()
+                permanenciaDeArchivos()
             else:
                 print("\n\tLa lista esta vacia no se pueden mostrar pedidos")
         elif opcion == "eliminar pedido":
-            if clases.gestor_de_pedidos.validarListaVacia():
-                negocio.deleteOrder()
+            if gestor_de_pedidos.validarListaVacia():
+                deleteOrder()
             else:
                 print("\n\tLa lista esta vacia no se puede eliminar pedidos")
         elif opcion == "salir":
@@ -164,15 +163,15 @@ def menuSucursal():
         opcion = input("Escriba la opcion que desea seleccionar: ")
         opcion = opcion.lower()
         if opcion == "crear sucursal":
-            negocio.create_sucursal()
+            create_sucursal()
         elif opcion == "modificar sucursal":
-            if clases.gestor_de_sucursal.validarListaVacia():
+            if gestor_de_sucursal.validarListaVacia():
                 print("la opcion no esta lista aun")
             else:
                 print("\n\tLa lista esta vacia no se puede modificar sucursales")
         elif opcion == "mostrar todo":
-            if clases.gestor_de_sucursal.validarListaVacia():
-                clases.gestor_de_sucursal.mostrar_todos()
+            if gestor_de_sucursal.validarListaVacia():
+                gestor_de_sucursal.mostrar_todos()
                 print(
                     colors.OK,
                     "Para mas detalles sobre la sucursal, elija la opcion 'Mostrar simplificado'",
@@ -181,12 +180,12 @@ def menuSucursal():
             else:
                 print("\n\tLa lista esta vacia no se pueden mostrar sucursales")
         elif opcion == "mostrar simplificado":
-            if clases.gestor_de_sucursal.validarListaVacia():
+            if gestor_de_sucursal.validarListaVacia():
                 print("la opcion no esta lista aun")
             else:
                 print("\n\tLa lista esta vacia no se pueden mostrar sucursales")
         elif opcion == "eliminar sucursal":
-            if clases.gestor_de_sucursal.validarListaVacia():
+            if gestor_de_sucursal.validarListaVacia():
                 print("la opcion no esta lista aun")
             else:
                 print("\n\tLa lista esta vacia no se puede eliminar sucursales")
@@ -205,10 +204,11 @@ def mainMenu():
 
     while True:
         # grafico ASCII
-        pyfiglet.print_figlet(text="La Despensita\nby Franco Monzon", colors="RED")
+        pyfiglet.print_figlet(
+            text="La Despensita\nby Franco Monzon", colors="RED")
         # Imprimir Menu
         print(menu)
-        opcion = negocio.intValidate(
+        opcion = intValidate(
             "A continuacion ingrese el numero de la opcion que desea realizar: "
         )
         if opcion == 1:
@@ -226,5 +226,5 @@ def mainMenu():
             break
 
 
-negocio.permanenciaDeArchivos()
+permanenciaDeArchivos()
 mainMenu()

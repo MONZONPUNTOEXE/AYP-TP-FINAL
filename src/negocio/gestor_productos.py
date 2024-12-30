@@ -1,3 +1,7 @@
+from clases.producto import Producto
+from utils.colors_text import yellow_text, red_text, green_text
+
+
 class gestorProductos:
     def __init__(self):
         self.productos: list[Producto] = []
@@ -6,9 +10,7 @@ class gestorProductos:
         if len(self.productos) > 0:
             return str(self.productos)
         else:
-            return (
-                colors.WARNING + "No hay productos Cargados actualmente" + colors.RESET
-            )
+            return yellow_text("No hay productos Cargados actualmente")
 
     def validarListaVacia(self):
         if len(self.productos) > 0:
@@ -23,11 +25,9 @@ class gestorProductos:
         if self.productos:
             print("Listando los Productos disponibles")
             for producto in self.productos:
-                print(colors.OK, producto, colors.RESET)
+                print(green_text(producto))
         else:
-            print(
-                colors.FAIL, "No hay productos cargados hasta el momento", colors.RESET
-            )
+            print(red_text("No hay productos cargados hasta el momento"))
 
     def mostrar_simplificado(self):
         if self.productos:
@@ -44,3 +44,6 @@ class gestorProductos:
 
     def obtener_nuevo_codigo(self):
         return len(self.productos) + 1
+
+
+gestor_de_productos = gestorProductos()
