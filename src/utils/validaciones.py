@@ -1,10 +1,14 @@
+from negocio.negocio import graphi
+from utils.colors_text import red_text, yellow_text, green_text
+
+
 # validaciones
 def intValidate(msg="Ingrese un numero positivo: "):
     entero = ""
     while not entero.isdecimal():
         entero = input(msg)
         if not entero.isdecimal():
-            print(colors.WARNING, "Debe ingresar un numero entero!", colors.RESET)
+            print(red_text("Debe ingresar un numero entero!"))
     return int(entero)
 
 
@@ -41,15 +45,11 @@ def is_float(num):
 
 def validateClientName():
     while True:
-        name = input("Ingrese el nombre el Nombre y Apellido: ")
+        name = input("Ingrese el Nombre y Apellido: ")
         if len(name) < 61:
             return name
         else:
-            print(
-                colors.FAIL
-                + "El nombre debe tener menos de 60 caracteres"
-                + colors.RESET
-            )
+            print(red_text("El nombre debe tener menos de 60 caracteres"))
 
 
 def validateProductName(msg="Ingrese el nombre no mas de 30 caracteres: ") -> str:
@@ -58,25 +58,13 @@ def validateProductName(msg="Ingrese el nombre no mas de 30 caracteres: ") -> st
         if len(name) < 30:
             return name
         else:
-            print(
-                colors.FAIL
-                + "El nombre debe tener menos de 50 caracteres"
-                + colors.RESET
-            )
+            print(red_text("El nombre debe tener menos de 50 caracteres"))
 
 
 def dniValidate() -> int:
-    dni = intValidate(
-        colors.WARNING + "Ingrese su DNI, sin coma ni puntos: " + colors.RESET
-    )
+    dni = intValidate(yellow_text("Ingrese su DNI, sin coma ni puntos: "))
     while len(str(dni)) != 8:
-        print(
-            colors.FAIL
-            + "El DNI ingresado no es valido, Intentelo nuevamente!"
-            + colors.RESET
-        )
-        dni = intValidate(
-            colors.WARNING + "Ingrese su DNI, sin coma ni puntos: " + colors.RESET
-        )
-    print(f"{colors.OK}Su DNI ({dni}) se guardo satisfactoriamente! {colors.RESET}")
+        print(red_text("El DNI ingresado no es valido, Intentelo nuevamente!"))
+        dni = intValidate(yellow_text("Ingrese su DNI, sin coma ni puntos: "))
+    print(green_text(f"Su DNI ({dni}) se guardo satisfactoriamente!"))
     return int(dni)

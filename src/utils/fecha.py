@@ -6,14 +6,15 @@ from utils.colors_text import red_text
 
 
 class Fecha:
-    def __init__(self, fecha_str: str = None):
+    def __init__(self, fecha_str: str = None, get_hour=False):
         if not fecha_str:
             hoy = datetime.now()
             hora = time.localtime()
-            self.hora = time.strftime("%H:%M:%S", hora)
+            self.anio = hoy.year
             self.dia = hoy.day
             self.mes = hoy.month
-            self.anio = hoy.year
+            if get_hour:
+                self.hora = time.strftime("%H:%M:%S", hora)
         else:
             # validar formato de fecha dd/mm/aaaa con expresiones regulres
             if not self.es_fecha_valida(fecha_str):
@@ -29,5 +30,8 @@ class Fecha:
         patron = r"^(0[1-9]|[12][0-9]|3[01])/(0[1-9]|1[0-2])/\d{4}$"
         return re.match(patron, fecha)
 
-    def __str__(self):
-        return f"{self.dia}/{self.mes}/{self.anio} {self.hora}"
+    def __str__(self, get_hour=False):
+        if get_hour:
+            return f"{self.dia}/{self.mes}/{self.anio} {self.hora}"
+        else:
+            return f"{self.dia}/{self.mes}/{self.anio}"

@@ -1,3 +1,10 @@
+from negocio.gestor_clientes import gestor_de_clientes
+from utils.gestion_archivos import escribir_en_binario_clientes
+from clases.cliente import Cliente
+from negocio.negocio import graphi
+from utils.validaciones import dniValidate, validateClientName, intValidate
+
+
 # create Cliente
 def createClient():
     global gestor_de_clientes
@@ -5,14 +12,14 @@ def createClient():
         cod = dniValidate()
         name = validateClientName()
         print("Ingrese la fecha de Nacimiento en este formato DD/MM/AAAA")
-        date = clases.gestor_de_clientes._pedir_fecha_nacimiento_valida()
-        new_client = clases.Cliente(cod, name, date)
-        clases.gestor_de_clientes.clientes.append(new_client)
+        date = gestor_de_clientes._pedir_fecha_nacimiento_valida()
+        new_client = Cliente(cod, name, date)
+        gestor_de_clientes.clientes.append(new_client)
         escribir_en_binario_clientes()
         print("Se ha creado un nuevo Cliente")
         print(new_client)
         user = input(f"hay un total de ({
-                     len(clases.gestor_de_clientes.clientes)}) Clientes desea ingresar mas ?: s/n ")
+                     len(gestor_de_clientes.clientes)}) Clientes desea ingresar mas ?: s/n ")
         if user.lower() == "n":
             break
 
@@ -20,14 +27,11 @@ def createClient():
 # Update Cliente
 def updateClient():
     global gestor_de_clientes
-    clases.gestor_de_clientes.mostrar_simplificado()
-    client_code = intValidate(
-        "Ingrese el DNI del Cliente que desea modificar: ")
-    client_encontrado = clases.gestor_de_clientes.buscar_por_codigo(
-        client_code)
+    gestor_de_clientes.mostrar_simplificado()
+    client_code = intValidate("Ingrese el DNI del Cliente que desea modificar: ")
+    client_encontrado = gestor_de_clientes.buscar_por_codigo(client_code)
     if client_encontrado:
-        nuevo_nombre = input(
-            "Ingrese el nuevo nombre - (Enter para dejar el actual): ")
+        nuevo_nombre = input("Ingrese el nuevo nombre - (Enter para dejar el actual): ")
         dni_confirm = input(
             "Desea cambiar el DNI y Fecha de Nacimiento del Cliente ? S/n "
         )
@@ -35,7 +39,7 @@ def updateClient():
             nuevo_id = ""
         else:
             nuevo_id = dniValidate()
-        nuevo_fecha = clases.gestor_de_clientes._pedir_fecha_nacimiento_valida()
+        nuevo_fecha = gestor_de_clientes._pedir_fecha_nacimiento_valida()
 
         # cambios anteriores
         nombre_sin_cambio = client_encontrado.surname_name
@@ -75,13 +79,13 @@ def updateClient():
 # Delete Cliente
 def deleteClient():
     global gestor_de_clientes
-    clases.gestor_de_clientes.mostrar_simplificado()
+    gestor_de_clientes.mostrar_simplificado()
     code = intValidate("Ingrese el DNI del Cliente que desea Eliminar: ")
-    client_encontrado = clases.gestor_de_clientes.buscar_por_codigo(code)
+    client_encontrado = gestor_de_clientes.buscar_por_codigo(code)
     if client_encontrado:
         opcion = input(f"\n\tDesea eliminar ?\n\n{client_encontrado}\nS/n: ")
         if opcion.lower() in ("si", "s", "y", "yes" "ye"):
-            clases.gestor_de_clientes.clientes.remove(client_encontrado)
+            gestor_de_clientes.clientes.remove(client_encontrado)
             escribir_en_binario_clientes()
             print(f"\n\tSe ha eliminado de la lista:\n{client_encontrado}")
         else:

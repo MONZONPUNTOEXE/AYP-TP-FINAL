@@ -3,12 +3,13 @@ import utils.menu as utils
 import pyfiglet
 import os
 
-
 # internal modules
-from negocio.gestor_productos import gestor_de_productos
 from utils.gestion_archivos import permanenciaDeArchivos
 from utils.validaciones import intValidate
 from utils.colors_text import red_text
+
+# funciones de productos
+from negocio.gestor_productos import gestor_de_productos
 from negocio.funciones_productos import (
     createProduct,
     update_all_product,
@@ -18,6 +19,11 @@ from negocio.funciones_productos import (
     update_product_stock,
     removeProduct,
 )
+
+# funciones de clientes
+from negocio.gestor_clientes import gestor_de_clientes
+from negocio.funciones_clientes import createClient, updateClient, deleteClient
+
 
 print(os.listdir())
 
@@ -204,8 +210,7 @@ def mainMenu():
 
     while True:
         # grafico ASCII
-        pyfiglet.print_figlet(
-            text="La Despensita\nby Franco Monzon", colors="RED")
+        pyfiglet.print_figlet(text="La Despensita\nby Franco Monzon", colors="RED")
         # Imprimir Menu
         print(menu)
         opcion = intValidate(
