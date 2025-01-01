@@ -6,7 +6,7 @@ import os
 # internal modules
 from utils.gestion_archivos import permanenciaDeArchivos
 from utils.validaciones import intValidate
-from utils.colors_text import red_text
+from utils.colors_text import red_text, green_text
 
 # funciones de productos
 from negocio.gestor_productos import gestor_de_productos
@@ -24,8 +24,14 @@ from negocio.funciones_productos import (
 from negocio.gestor_clientes import gestor_de_clientes
 from negocio.funciones_clientes import createClient, updateClient, deleteClient
 
+# funciones de pedidos
+from negocio.gestor_pedidos import gestor_de_pedidos
+from negocio.funciones_pedidos import createOrder, updateOrder, readOrder, deleteOrder
+from negocio.negocio import ordenar_por_merge_sort_por_total
 
-print(os.listdir())
+# funciones de Sucursal
+from negocio.gestor_sucursales import gestor_de_sucursal
+from negocio.funciones_sucursales import create_sucursal
 
 # Creacion de los objetos "Gestores de Entidades" -----------------------------
 
@@ -133,9 +139,9 @@ def menuPedidos():
             if gestor_de_pedidos.validarListaVacia():
                 gestor_de_pedidos.mostrar_todos()
                 print(
-                    colors.OK,
-                    "Para mas detalles sobre el pedido, elija la opcion 'Mostrar simplificado'",
-                    colors.RESET,
+                    green_text(
+                        "Para mas detalles sobre el pedido, elija la opcion 'Mostrar simplificado'"
+                    )
                 )
             else:
                 print("\n\tLa lista esta vacia no se pueden mostrar pedidos")
@@ -179,9 +185,9 @@ def menuSucursal():
             if gestor_de_sucursal.validarListaVacia():
                 gestor_de_sucursal.mostrar_todos()
                 print(
-                    colors.OK,
-                    "Para mas detalles sobre la sucursal, elija la opcion 'Mostrar simplificado'",
-                    colors.RESET,
+                    green_text(
+                        "Para mas detalles sobre la sucursal, elija la opcion 'Mostrar simplificado'"
+                    )
                 )
             else:
                 print("\n\tLa lista esta vacia no se pueden mostrar sucursales")
