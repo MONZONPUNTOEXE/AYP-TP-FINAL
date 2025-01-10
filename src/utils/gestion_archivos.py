@@ -51,6 +51,12 @@ def cargar_desde_binario_pedidos():
         gestor_de_pedidos.pedidos = load(bin_file)
 
 
+def cargar_desde_binario_sucursales():
+    global gestor_de_sucursal
+    with open("sucursales.bin", "rb") as bin_file:
+        gestor_de_sucursal.sucursales = load(bin_file)
+
+
 def permanenciaDeArchivos():
     dirs = os.listdir()
     for directory in dirs:
@@ -76,6 +82,10 @@ def permanenciaDeArchivos():
             print("Cargando 'clientes.bin'...")
             cargar_desde_binario_clientes()
             print("'clientes.bin' Se haa cargado exitosamente.")
+        elif bin == "sucursales.bin":
+            print("Cargando 'sucursales.bin'...")
+            cargar_desde_binario_sucursales()
+            print("'sucursales.bin' Se ha cargado exitosamente.")
         elif bin == "pedidos.bin":
             print("Cargando 'pedidos.bin'...")
             cargar_desde_binario_pedidos()

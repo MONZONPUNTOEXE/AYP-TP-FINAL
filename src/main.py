@@ -1,7 +1,6 @@
 # external library
 import utils.menu as utils
 import pyfiglet
-import os
 
 # internal modules
 from utils.gestion_archivos import permanenciaDeArchivos
@@ -31,7 +30,11 @@ from negocio.negocio import ordenar_por_merge_sort_por_total
 
 # funciones de Sucursal
 from negocio.gestor_sucursales import gestor_de_sucursal
-from negocio.funciones_sucursales import create_sucursal
+from negocio.funciones_sucursales import (
+    create_sucursal,
+    add_sucursal_product,
+    delete_sucursal,
+)
 
 # Creacion de los objetos "Gestores de Entidades" -----------------------------
 
@@ -181,6 +184,11 @@ def menuSucursal():
                 print("la opcion no esta lista aun")
             else:
                 print("\n\tLa lista esta vacia no se puede modificar sucursales")
+        elif opcion == "agregar productos":
+            if gestor_de_sucursal.validarListaVacia():
+                add_sucursal_product()
+            else:
+                print("\n\tLa lista esta vacia no se puede modificar sucursales")
         elif opcion == "mostrar todo":
             if gestor_de_sucursal.validarListaVacia():
                 gestor_de_sucursal.mostrar_todos()
@@ -193,12 +201,12 @@ def menuSucursal():
                 print("\n\tLa lista esta vacia no se pueden mostrar sucursales")
         elif opcion == "mostrar simplificado":
             if gestor_de_sucursal.validarListaVacia():
-                print("la opcion no esta lista aun")
+                gestor_de_sucursal.mostrar_simplificado()
             else:
                 print("\n\tLa lista esta vacia no se pueden mostrar sucursales")
         elif opcion == "eliminar sucursal":
             if gestor_de_sucursal.validarListaVacia():
-                print("la opcion no esta lista aun")
+                delete_sucursal()
             else:
                 print("\n\tLa lista esta vacia no se puede eliminar sucursales")
         elif opcion == "salir":

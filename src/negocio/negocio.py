@@ -1,5 +1,17 @@
-import copy
-import pyfiglet
+from negocio.gestor_pedidos import gestor_de_pedidos
+
+
+# fucion de Carrito
+def subtotalCarrito(carrito) -> float:
+    suma = 0
+    for producto in carrito:
+        suma += producto.product_price
+    return float(suma)
+
+
+def mostrarCarrito(carrito: list):
+    for producto in carrito:
+        print(f"{producto.product_name} ${producto.product_price}")
 
 
 # Subrrayado de texto
@@ -11,8 +23,8 @@ def graphi(text):
 
 # ordenar por TOTAL (marge sort)
 def mezclar_por_total(lista, inicio, medio, fin):
-    izquierda = lista[inicio: medio + 1]
-    derecha = lista[medio + 1: fin + 1]
+    izquierda = lista[inicio : medio + 1]
+    derecha = lista[medio + 1 : fin + 1]
 
     i = j = 0
     k = inicio
@@ -51,6 +63,6 @@ def marge_sort_total_order(lista, inicio, fin):
 
 def ordenar_por_merge_sort_por_total():
     global gestor_de_pedidos
-    lista_de_pedidos = clases.gestor_de_pedidos.pedidos
+    lista_de_pedidos = gestor_de_pedidos.pedidos
     marge_sort_total_order(lista_de_pedidos, 0, len(lista_de_pedidos) - 1)
     print(lista_de_pedidos)

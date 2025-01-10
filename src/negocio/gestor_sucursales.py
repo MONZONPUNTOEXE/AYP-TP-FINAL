@@ -29,7 +29,7 @@ class GestorSucursales:
     def mostrar_simplificado(self):
         if self.sucursales:
             for sucursal in self.sucursales:
-                print(sucursal.resumen_sucursal())
+                print(sucursal.view_product_list())
         else:
             print(yellow_text("La lista esta Vacia"))
 
@@ -38,6 +38,9 @@ class GestorSucursales:
             if sucursal.id_sucursal == codigo_a_buscar:
                 return sucursal
         return None
+
+    def eliminar_sucursal(self, sucursal_a_eliminar: Sucursal):
+        self.sucursales.remove(sucursal_a_eliminar)
 
     def create_sucursal_cod(self):
         return len(self.sucursales) + 1

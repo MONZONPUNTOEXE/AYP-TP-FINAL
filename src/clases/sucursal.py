@@ -68,5 +68,4 @@ class Sucursal:
                 print(f"\t- {producto.product_name} ${producto.product_price}")
 
     def resumen_sucursal(self):
-        return f"ID: {
-            self.id_sucursal} - Fecha: {self.order_date}"
+        return f"ID: {self.id_sucursal} Nombre: {self.sucursal_name} - Fecha: {self.order_date}"

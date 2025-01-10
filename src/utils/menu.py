@@ -66,6 +66,7 @@ sucursal_menu_text = """
 ------------------- Menu Sucursal ---------------------------
 
 crear sucursal - Para crear un sucursal nuevo
+agregar productos - Para agregar productos a una sucursal
 modificar sucursal - Para modificar un sucursal
 mostrar todo - Para listar todos las sucursales
 mostrar simplificado - Para mas detalles de las sucursales

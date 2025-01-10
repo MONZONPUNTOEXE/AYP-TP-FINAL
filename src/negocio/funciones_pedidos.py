@@ -1,16 +1,4 @@
 # funciones de Orden -----------------
-def subtotalCarrito(carrito) -> float:
-    suma = 0
-    for producto in carrito:
-        suma += producto.product_price
-    return float(suma)
-
-
-def mostrarCarrito(carrito: list):
-    for producto in carrito:
-        print(f"{producto.product_name} ${producto.product_price}")
-
-
 def buscar_cliente_producto():
     while True:
         cod = clases.gestor_de_pedidos.create_order_cod()
@@ -19,11 +7,12 @@ def buscar_cliente_producto():
         dni_code = intValidate(
             "\nIngrese DNI del Cliente Para realizar el Pedido o '4' Si desea Salir: "
         )
-        client_encontrado = clases.gestor_de_clientes.buscar_por_codigo(
-            dni_code)
+        client_encontrado = clases.gestor_de_clientes.buscar_por_codigo(dni_code)
         if client_encontrado:
-            print(f"\n\tSu Cliente es: {
-                client_encontrado.surname_name}\n")
+            print(
+                f"\n\tSu Cliente es: {
+                    client_encontrado.surname_name}\n"
+            )
             return (cod, client_encontrado.surname_name)
         elif dni_code == 4:
             return (None, None)
@@ -31,26 +20,6 @@ def buscar_cliente_producto():
             print(
                 colors.WARNING,
                 "El DNI ingresado no existe, intentelo nuevamente",
-                colors.RESET,
-            )
-
-
-def buscar_sucursal_producto():
-    while True:
-        print("\t ------------ Lista de Sucursales -----------------")
-        clases.gestor_de_sucursal.mostrar_simplificado()
-        code = intValidate(
-            "\nIngrese el codigo del la Sucursal Para agregar productos: "
-        )
-        sucursal_encontrado = clases.gestor_de_sucursal.buscar_por_codigo(code)
-        if sucursal_encontrado:
-            print(f"\n\tSu Sucursal es: {
-                sucursal_encontrado.sucursal_name}\n")
-            return sucursal_encontrado.sucursal_name
-        else:
-            print(
-                colors.WARNING,
-                "El codigo de Sucursal ingresado no existe, intentelo nuevamente",
                 colors.RESET,
             )
 
@@ -226,8 +195,7 @@ def updateCarrito(carrito):
         if producto_encontrado != -1:
             print(producto_encontrado)
             clases.gestor_de_productos.mostrar_simplificado()
-            buscar_nuevo_producto = intValidate(
-                "Ingrese el ID del Producto nuevo: ")
+            buscar_nuevo_producto = intValidate("Ingrese el ID del Producto nuevo: ")
             update_product = clases.gestor_de_productos.buscar_por_codigo(
                 buscar_nuevo_producto
             )
@@ -254,17 +222,14 @@ def updateOrder():
     global gestor_de_pedidos
     global gestor_de_clientes
     clases.gestor_de_pedidos.mostrar_simplificado()
-    buscar_pedido = intValidate(
-        "Ingrese el ID del Pedido que desea modificar: ")
-    pedido_encontrado = clases.gestor_de_pedidos.buscar_por_codigo(
-        buscar_pedido)
+    buscar_pedido = intValidate("Ingrese el ID del Pedido que desea modificar: ")
+    pedido_encontrado = clases.gestor_de_pedidos.buscar_por_codigo(buscar_pedido)
     if pedido_encontrado:
         clases.gestor_de_clientes.mostrar_simplificado()
         buscar_cliente = intValidate(
             "Ingrese el DNI del si lo quiere reemplazar cliente para remplazar, sino indique el anterior: "
         )
-        cliente_encontrado = clases.gestor_de_clientes.buscar_por_codigo(
-            buscar_cliente)
+        cliente_encontrado = clases.gestor_de_clientes.buscar_por_codigo(buscar_cliente)
         if cliente_encontrado:
             pedido_encontrado.customer = cliente_encontrado.surname_name
 
