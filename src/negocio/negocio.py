@@ -23,8 +23,8 @@ def graphi(text):
 
 # ordenar por TOTAL (marge sort)
 def mezclar_por_total(lista, inicio, medio, fin):
-    izquierda = lista[inicio : medio + 1]
-    derecha = lista[medio + 1 : fin + 1]
+    izquierda = lista[inicio: medio + 1]
+    derecha = lista[medio + 1: fin + 1]
 
     i = j = 0
     k = inicio

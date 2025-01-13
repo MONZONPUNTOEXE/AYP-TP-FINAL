@@ -224,7 +224,8 @@ def mainMenu():
 
     while True:
         # grafico ASCII
-        pyfiglet.print_figlet(text="La Despensita\nby Franco Monzon", colors="RED")
+        pyfiglet.print_figlet(
+            text="La Despensita\nby Franco Monzon", colors="RED")
         # Imprimir Menu
         print(menu)
         opcion = intValidate(
