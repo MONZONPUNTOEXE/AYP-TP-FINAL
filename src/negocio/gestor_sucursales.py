@@ -29,7 +29,7 @@ class GestorSucursales:
     def mostrar_simplificado(self):
         if self.sucursales:
             for sucursal in self.sucursales:
-                sucursal.mostrar_carrito()
+                print(sucursal.view_product_list())
         else:
             print(yellow_text("La lista esta Vacia"))
 
