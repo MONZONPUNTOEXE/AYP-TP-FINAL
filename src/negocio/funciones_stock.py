@@ -1,5 +1,6 @@
 from utils.validaciones import intValidate
 from utils.colors_text import red_text
+from negocio.gestor_productos import gestor_de_productos
 
 
 # Funciones de Stock -------------

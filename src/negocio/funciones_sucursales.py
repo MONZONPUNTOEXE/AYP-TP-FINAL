@@ -26,8 +26,7 @@ def create_sucursal():
         cod = gestor_de_sucursal.create_sucursal_cod()
         name = validateProductName()
         new_sucursal = Sucursal(cod, name)
-        user = input(yellow_text(
-            "Desea ingresar Productos a esta Sucursal ?: s/n: "))
+        user = input(yellow_text("Desea ingresar Productos a esta Sucursal ?: s/n: "))
         if (
             user.lower() in ("s", "si", "yes", "y")
             and gestor_de_productos.validarListaVacia()
@@ -77,6 +76,7 @@ def buscar_sucursal_producto():
         sucursal_encontrado = gestor_de_sucursal.buscar_por_codigo(code)
         if sucursal_encontrado:
             print(f"\n\tSu Sucursal es: {sucursal_encontrado.sucursal_name}\n")
+            print(sucursal_encontrado)
             return sucursal_encontrado
         else:
             print(
@@ -86,35 +86,14 @@ def buscar_sucursal_producto():
             )
 
 
-def add_sucursal_product():
-    global gestor_de_productos
-    global gestor_de_sucursal
-    pyfiglet.print_figlet(text="Agregar Productos a Sucursal", colors="BLUE")
-    if (
-        gestor_de_sucursal.validarListaVacia()
-        and gestor_de_productos.validarListaVacia()
-    ):
-        sucursal_encontrado = buscar_sucursal_producto()
-        while True:
-            if not (sucursal_encontrado):
-                break
-
-    else:
-        if len(gestor_de_productos.productos) == 0:
-            text = "No hay productos para seleccionar, debe cargar los Productos e intentelo nuevamente"
-            graphi(text)
-
-
 # sumar todos los stock que tiene el Producto
 def carrito_add_product(sucursal):
     global gestor_de_productos
 
     while True:
-        print("\t----------------------------------------------------------")
-        print("\n\t--------- Productos Disponibles -------------")
+        print("\n\t------ Productos Disponibles en el Inventario -------")
         gestor_de_productos.mostrar_simplificado()
-        prod_code = intValidate(
-            "Ingrese el Codigo del Producto que desee agregar: ")
+        prod_code = intValidate("Ingrese el Codigo del Producto que desee agregar: ")
         producto_encontrado = gestor_de_productos.buscar_por_codigo(prod_code)
         if producto_encontrado:
             producto_de_sucursal = copy.deepcopy(producto_encontrado)
@@ -122,6 +101,7 @@ def carrito_add_product(sucursal):
             sucursal_stock = updateStock(
                 producto_de_sucursal, stock_validate, False, True
             )
+            producto_encontrado.stock -= sucursal_stock
             user = ""
             if producto_encontrado.stock == 0:
                 print(red_text("No hay mas Stock para este Producto"))
@@ -130,29 +110,23 @@ def carrito_add_product(sucursal):
                         sucursal.sucursal_name} ?: s/n "
                 )
                 if user.lower() in ("n", "no"):
-                    print("Aca va el subtotalCarrito")
-                    # new_sucursal = agregar_descuento(
-                    #     sucursal, CARRITO_DE_PRODUCTOS.carrito
-                    # )
                     return sucursal
             else:
-                sucursal.agregar_producto(
-                    producto_de_sucursal.ref_code, sucursal_stock)
+                sucursal.agregar_producto(producto_de_sucursal.ref_code, sucursal_stock)
                 print(
                     yellow_text(
                         f"Carrito Actual para {
                             sucursal.sucursal_name}"
                     )
                 )
-                sucursal.mostrar_carrito()
-                print(green_text(print("Aca va el subtotalCarrito")))
+                print(sucursal.view_product_list())
             if user == "":
                 user = input(
                     f"Desea ingresar mas Productos al Carrito para {
                         sucursal.sucursal_name} ?: s/n "
                 )
                 if user.lower() in ("n", "no"):
-                    print("Aca va el subtotalCarrito")
+                    # aca podriamos agregar el descuento
                     # new_sucursal = agregar_descuento(
                     #     sucursal, CARRITO_DE_PRODUCTOS.carrito
                     # )
@@ -198,6 +172,26 @@ def agregar_descuento(sucursal, CARRITO_DE_PRODUCTOS: list):
                 cod, name, CARRITO_DE_PRODUCTOS, opcion, subtotal, total
             )
             return new_sucursal
+
+
+def add_sucursal_product():
+    global gestor_de_productos
+    global gestor_de_sucursal
+    pyfiglet.print_figlet(text="Agregar Productos a Sucursal", colors="BLUE")
+    if (
+        gestor_de_sucursal.validarListaVacia()
+        and gestor_de_productos.validarListaVacia()
+    ):
+        sucursal_encontrado = buscar_sucursal_producto()
+        if sucursal_encontrado:
+            carrito_add_product(sucursal_encontrado)
+    else:
+        if len(gestor_de_productos.productos) == 0:
+            text = "No hay productos para seleccionar, debe cargar los Productos e intentelo nuevamente"
+            graphi(text)
+        if len(gestor_de_sucursal.sucursales) == 0:
+            text = "No hay Sucursal para seleccionar, debe cargar las sucursales e intentelo nuevamente"
+            graphi(text)
 
 
 def delete_sucursal():

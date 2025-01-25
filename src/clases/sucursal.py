@@ -98,8 +98,7 @@ class Sucursal:
                 # Verificar si el product_list tiene productos
                 print("Productos en la Sucursal:")
                 for producto_id, cantidad in self.product_list.items():
-                    nombre_producto = gestor_de_productos.buscar_por_codigo(
-                        producto_id)
+                    nombre_producto = gestor_de_productos.buscar_por_codigo(producto_id)
                     name = nombre_producto.product_name
                     costo = nombre_producto.product_cost_price
                     precio_final = nombre_producto.product_price
@@ -120,16 +119,16 @@ class Sucursal:
                 output += "El carrito está vacío."
 
         else:
-            output += f"\nSucursal: {self.sucursal_name} - Fecha: {
+            output += f"\nID Sucursal: ({self.id_sucursal}) - {self.sucursal_name} - Fecha: {
                 self.order_date}\n"
+            output += f"\t ------------------------------------------------ \n"
             if self.product_list:
                 # Verificar si el product_list tiene productos
-                output += "Productos en la Sucursal:\n"
+                output += "Productos en la Sucursal: \n"
                 costo_total = 0
                 precio_total = 0
                 for producto_id, cantidad in self.product_list.items():
-                    nombre_producto = gestor_de_productos.buscar_por_codigo(
-                        producto_id)
+                    nombre_producto = gestor_de_productos.buscar_por_codigo(producto_id)
                     name = nombre_producto.product_name
                     costo = nombre_producto.product_cost_price
                     precio_final = nombre_producto.product_price
@@ -148,6 +147,7 @@ class Sucursal:
                     costo_total}"
                 output += f"\n\t- El Precio final total del Carrito es de: {
                     precio_total}\n"
+                output += f"\t ------------------------------------------------ \n"
 
             else:
                 output += "El carrito está vacío."
