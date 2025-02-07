@@ -33,7 +33,9 @@ from negocio.gestor_sucursales import gestor_de_sucursal
 from negocio.funciones_sucursales import (
     create_sucursal,
     add_sucursal_product,
+    update_sucursal_name,
     delete_sucursal,
+    update_sucursal_stock,
 )
 
 # Creacion de los objetos "Gestores de Entidades" -----------------------------
@@ -181,7 +183,7 @@ def menuSucursal():
             create_sucursal()
         elif opcion == "modificar sucursal":
             if gestor_de_sucursal.validarListaVacia():
-                print("la opcion no esta lista aun")
+                update_sucursal_menu()
             else:
                 print("\n\tLa lista esta vacia no se puede modificar sucursales")
         elif opcion == "agregar productos":
@@ -211,6 +213,24 @@ def menuSucursal():
                 print("\n\tLa lista esta vacia no se puede eliminar sucursales")
         elif opcion == "salir":
             break
+
+
+def update_sucursal_menu():
+    pyfiglet.print_figlet(text="\tMenu\nModificar Sucursal", colors="GREEN")
+    global menu_text
+    global gestor_de_sucursal
+    while True:
+        print(utils.update_sucursal_menu_text)
+        opcion = input("Escriba la opcion que desea seleccionar: ")
+        opcion = opcion.lower()
+        if opcion == "cambiar nombre":
+            update_sucursal_name()
+        elif opcion == "cambiar stock":
+            update_sucursal_stock()
+        elif opcion == "atras":
+            break
+        else:
+            print(red_text("Opcion incorrecta, intentelo nuevamente"))
 
 
 def mainMenu():
@@ -244,6 +264,25 @@ def mainMenu():
                 text="Gracias !!! \nVuelva Pronto", font="slant", colors="BLUE"
             )
             break
+
+
+# Sucursal
+# TODO: Editar Sucursal: Nombre [realizado]
+# TODO: Editar Carrito de Sucursal: productos del carrito (Eliminar productos, agregar Stock[realizado], quitar Stock)
+# MALDICION, lo que venia haciendo estaba muy mal planteado!
+# TODO: Agregar Descuentos
+#
+# Exportar a CVS
+# TODO: Poder exportar en CVS, El Stock en sucursales, El Stock en inventario etc.
+#
+# Productos
+# TODO: Que los productos al cambiar el precio, cambien en todos los ambitos (Sucursales, pedidos etc)
+#
+# Pedidos
+# TODO: Crear ordenes de compra y que modifiquen el inventario actual
+#
+# Ventas
+# TODO: Crear modulo de Ventas
 
 
 permanenciaDeArchivos()

@@ -67,12 +67,21 @@ sucursal_menu_text = """
 
 crear sucursal - Para crear un sucursal nuevo
 agregar productos - Para agregar productos a una sucursal
-modificar sucursal - Para modificar un sucursal
+modificar sucursal - Para modificar la Sucursal
 mostrar todo - Para listar todos las sucursales
 mostrar simplificado - Para mas detalles de las sucursales
 eliminar sucursal - Para eliminar un sucursal por codigo
 
 salir - Para Salir del programa
+"""
+
+# Submenu Sucursal
+update_sucursal_menu_text = """
+------------------- Menu Modificar Sucursal ---------------------------
+cambiar nombre - Para modificar el nombre de de la Sucursal
+cambiar stock - Para modificar el stock del Producto de la Sucursal
+
+atras - Para volver al menú anterior
 """
 
 # menu de ventas
