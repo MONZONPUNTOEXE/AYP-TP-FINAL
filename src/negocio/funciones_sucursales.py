@@ -1,4 +1,3 @@
-from enum import verify
 import pyfiglet
 import copy
 
@@ -27,8 +26,7 @@ def create_sucursal():
         cod = gestor_de_sucursal.create_sucursal_cod()
         name = validateProductName()
         new_sucursal = Sucursal(cod, name)
-        user = input(yellow_text(
-            "Desea ingresar Productos a esta Sucursal ?: s/n: "))
+        user = input(yellow_text("Desea ingresar Productos a esta Sucursal ?: s/n: "))
         if (
             user.lower() in ("s", "si", "yes", "y")
             and gestor_de_productos.validarListaVacia()
@@ -95,8 +93,7 @@ def carrito_add_product(sucursal):
     while True:
         print("\n\t------ Productos Disponibles en el Inventario -------")
         gestor_de_productos.mostrar_simplificado()
-        prod_code = intValidate(
-            "Ingrese el Codigo del Producto que desee agregar: ")
+        prod_code = intValidate("Ingrese el Codigo del Producto que desee agregar: ")
         producto_encontrado = gestor_de_productos.buscar_por_codigo(prod_code)
         if producto_encontrado:
             producto_de_sucursal = copy.deepcopy(producto_encontrado)
@@ -117,8 +114,7 @@ def carrito_add_product(sucursal):
                     escribir_en_binario_productos()
                     return sucursal
             else:
-                sucursal.agregar_producto(
-                    producto_de_sucursal.ref_code, sucursal_stock)
+                sucursal.agregar_producto(producto_de_sucursal.ref_code, sucursal_stock)
                 print(
                     green_text(
                         f"Se han agregado {sucursal_stock} unidades del Producto ({producto_de_sucursal.ref_code}) {
@@ -212,8 +208,7 @@ def add_sucursal_product():
 def update_sucursal_name():
     global gestor_de_sucursal
     gestor_de_sucursal.mostrar_todos()
-    code = intValidate(
-        "Ingrese el ID de la Sucursal que desea Cambiar el nombre: ")
+    code = intValidate("Ingrese el ID de la Sucursal que desea Cambiar el nombre: ")
     sucursal_encontrado = gestor_de_sucursal.buscar_por_codigo(code)
     if sucursal_encontrado:
         new_name = input("Ingrese el Nuevo nombre de la Sucursal: ")
@@ -236,21 +231,17 @@ def update_sucursal_stock():
     global gestor_de_sucursal
     global gestor_de_productos
     gestor_de_sucursal.mostrar_todos()
-    code = intValidate(
-        "Ingrese el ID de la Sucursal que desea Cambiar el Stock: ")
+    code = intValidate("Ingrese el ID de la Sucursal que desea Cambiar el Stock: ")
     sucursal_encontrado = gestor_de_sucursal.buscar_por_codigo(code)
     if sucursal_encontrado and sucursal_encontrado.verify_empty_product_list():
         print(green_text(sucursal_encontrado.view_product_list()))
-        opcion = intValidate(
-            "Ingrese el ID del producto que desea cambiar el Stock: ")
+        opcion = intValidate("Ingrese el ID del producto que desea cambiar el Stock: ")
         id_product_list = sucursal_encontrado.iterar_product_list(opcion)
         if id_product_list:
-            cantidad_anterior = sucursal_encontrado.product_list_get_cantidad(
-                opcion)
+            cantidad_anterior = sucursal_encontrado.product_list_get_cantidad(opcion)
             new_stock = intValidate("Ingrese el nuevo Stock del producto: ")
             producto_inventario = gestor_de_productos.buscar_por_codigo(opcion)
-            producto_stock = updateStock(
-                producto_inventario, new_stock, True, False)
+            producto_stock = updateStock(producto_inventario, new_stock, True, False)
             if producto_inventario.stock == 0:
                 print(red_text("No hay mas Stock para este Producto"))
             else:

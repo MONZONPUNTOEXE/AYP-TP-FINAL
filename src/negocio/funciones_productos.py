@@ -35,14 +35,12 @@ def createProduct():
 def update_all_product():
     global gestor_de_productos
     gestor_de_productos.mostrar_simplificado()
-    product_code = intValidate(
-        "Ingrese el codigo del Producto que desea modificar: ")
+    product_code = intValidate("Ingrese el codigo del Producto que desea modificar: ")
     producto_encontrado = gestor_de_productos.buscar_por_codigo(product_code)
     if producto_encontrado:
         print("Nombre del Producto Actual", producto_encontrado.product_name)
         nuevo_nombre = validateProductName("Ingrese el nuevo nombre: ")
-        print("Precio de Costo del Producto",
-              producto_encontrado.product_cost_price)
+        print("Precio de Costo del Producto", producto_encontrado.product_cost_price)
         nuevo_cost_price = floatValidate("Ingrese el nuevo precio de costo: ")
         print("Precio Final del Producto", producto_encontrado.product_price)
         nuevo_precio = floatValidate("Ingrese el nuevo precio: ")
@@ -74,8 +72,7 @@ def update_all_product():
         decidir_cambios = input("Desea guardar los cambios ? - (Si/no)")
         if decidir_cambios.lower() in ("no", "n"):
             producto_encontrado.product_name = nombre_sin_cambio
-            producto_encontrado.product_cost_price = float(
-                cost_price_sin_cambio)
+            producto_encontrado.product_cost_price = float(cost_price_sin_cambio)
             producto_encontrado.product_price = float(precio_sin_cambio)
             producto_encontrado.stock = int(stock_sin_cambio)
             print("El Producto no se ha actualizado")
@@ -97,8 +94,7 @@ def update_product_name():
     )
     producto_encontrado = gestor_de_productos.buscar_por_codigo(product_code)
     if producto_encontrado:
-        print("Nombre Actual:", green_text(
-            f"{producto_encontrado.product_name}"))
+        print("Nombre Actual:", green_text(f"{producto_encontrado.product_name}"))
         nuevo_nombre = validateProductName("Ingrese el nuevo nombre: ")
         # cambios anteriores
         nombre_sin_cambio = producto_encontrado.product_name
@@ -136,8 +132,7 @@ def update_product_cost_price():
     )
     producto_encontrado = gestor_de_productos.buscar_por_codigo(product_code)
     if producto_encontrado:
-        print("Costo Actual:", green_text(
-            f"${producto_encontrado.product_cost_price}"))
+        print("Costo Actual:", green_text(f"${producto_encontrado.product_cost_price}"))
         nuevo_precio = floatValidate("Ingrese el nuevo Costo del Producto: ")
         # cambios anteriores
         precio_sin_cambio = producto_encontrado.product_cost_price
@@ -170,13 +165,11 @@ def update_product_cost_price():
 def update_product_price():
     global gestor_de_productos
     gestor_de_productos.mostrar_simplificado()
-    product_code = intValidate(
-        "Ingrese el codigo del Producto que desea modificar: ")
+    product_code = intValidate("Ingrese el codigo del Producto que desea modificar: ")
     producto_encontrado = gestor_de_productos.buscar_por_codigo(product_code)
     if producto_encontrado:
         print(
-            "Precio final actual:", green_text(
-                f"${producto_encontrado.product_price}")
+            "Precio final actual:", green_text(f"${producto_encontrado.product_price}")
         )
         nuevo_precio = input("Ingrese el nuevo Precio Final: ")
         # cambios anteriores
@@ -243,6 +236,40 @@ def update_product_stock():
             print(producto_encontrado)
     else:
         print("El codigo no fue encontrado, intentelo nuevamente...")
+
+
+def perdida_productos():
+    global gestor_de_productos
+    gestor_de_productos.mostrar_simplificado()
+    code = intValidate("Ingrese el ID del Producto que desea quitar Stock: ")
+    producto_encontrado = gestor_de_productos.buscar_por_codigo(code)
+    if producto_encontrado:
+        print("Stock Actual:", green_text(f"${producto_encontrado.stock}"))
+        print(producto_encontrado.resumenProducto())
+        stock_sin_cambios = producto_encontrado.stock
+        cantidad_perdida = intValidate("Ingrese la Cantidad que desea Quitar: ")
+        # cambios anteriores
+        text_sin_cambios = "Sin aplicar Cambios"
+        graphi(text_sin_cambios)
+        print(producto_encontrado)
+
+        if cantidad_perdida:
+            producto_encontrado.stock = producto_encontrado.stock - cantidad_perdida
+
+        text_con_cambios = "Aplicando los cambios... "
+        graphi(text_con_cambios)
+        print(producto_encontrado)
+
+        decidir_cambios = input("Desea guardar los cambios ? - (Si/no)")
+        if decidir_cambios.lower() in ("no", "n"):
+            producto_encontrado.stock = stock_sin_cambios
+            print("El Stock del Producto no se ha actualizado")
+        else:
+            producto_encontrado.date_product_edit = True
+            producto_encontrado.date_edit = Fecha()
+            print("El Stock del Producto se ha actualizado correctamente")
+            escribir_en_binario_productos()
+            print(producto_encontrado)
 
 
 # Delete Producto

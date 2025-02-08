@@ -244,8 +244,7 @@ def mainMenu():
 
     while True:
         # grafico ASCII
-        pyfiglet.print_figlet(
-            text="La Despensita\nby Franco Monzon", colors="RED")
+        pyfiglet.print_figlet(text="La Despensita\nby Franco Monzon", colors="RED")
         # Imprimir Menu
         print(menu)
         opcion = intValidate(
@@ -265,6 +264,11 @@ def mainMenu():
             )
             break
 
+
+# Actual:
+# TODO: Realice la funcion perdidas en (funciones de Productos) deberia probarlo (Sin testear)
+# Si funciona deberia de encontrar la manera de poder plasmar esa informacion en el GESTOR DE PERDIDAS. Para tener un control de las perdidas
+# luego de realizar la funcion de perdidas en el stock de productos hacerlo en los productos de la Sucursal
 
 # Sucursal
 # TODO: Editar Sucursal: Nombre [realizado]
